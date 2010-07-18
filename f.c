@@ -289,7 +289,7 @@ static void parse_read_item(struct item *it, char *line) {
 static int read_items(struct item* items) {
 	char fn[256];
 	FILE *f;
-	int i;
+	int n;
 	ssize_t read;
 	char *line = NULL;
 	size_t len = 0;
@@ -299,29 +299,35 @@ static int read_items(struct item* items) {
 	if ((f = fopen(fn, "r")) == NULL)
 		return 0;
 
-	for (i = 0; (read = getline(&line, &len, f)) != -1; i++) {
+	for (n = 0; (read = getline(&line, &len, f)) != -1; n++) {
 		line[read - 1] = '\0'; /* remove newline */
-
-		parse_read_item(&items[i], line);
+		parse_read_item(&items[n], line);
 	}
 
 	fclose(f);
+
+	return n;
+}
+
+static int sort_items(const void *a, const void *b) {
+	return ((struct item *)a)->from > ((struct item *)b)->from;
 }
 
 static int main_list_items() {
-	int i;
+	int n;
 	struct item *items;
 
 	items = (struct item *)calloc(1024, sizeof(struct item));
 
-	read_items(items);
+	n = read_items(items);
+	qsort(items, n, sizeof(struct item), sort_items);
 	list_items(items);
 	free_items(items);
 
 	return EXIT_SUCCESS;
 }
 
-static int main_add_item(int argc, char *argv[]) {
+int main_add_item(int argc, char *argv[]) {
 	struct args a;
 	char s[15];
 	time_t from = 0;
