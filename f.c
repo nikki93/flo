@@ -218,21 +218,16 @@ static void list_items(const struct item* items) {
 		if (it.what == NULL)
 			break;
 
+		printf("% 2d  ", i);
+
 		if (it.from != 0) {
 			tm = localtime(&it.from);
 			strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
 			printf("%s", s);
 		}
 
-		if (it.to != 0) {
-			printf("--");
-			tm = localtime(&it.to);
-			strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
-			printf("%s", s);
-		}
-
 		if (it.from != 0 || it.to != 0)
-			printf(": ");
+			printf("  ");
 
 		printf("%s", it.what);
 
@@ -240,6 +235,12 @@ static void list_items(const struct item* items) {
 			printf("@%s", items[i].at);
 
 		printf("\n");
+
+		if (it.to != 0) {
+			tm = localtime(&it.to);
+			strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
+			printf("    %s\n", s);
+		}
 	}
 }
 
