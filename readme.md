@@ -4,7 +4,7 @@ f is a command line application that keeps you in check. It’s small and fast.
 
 ## usage
 
-    $ -w "clean apartment"
+    $ f -w "clean apartment"
     $ f -w "eat lunch" -a "some cafe" -f 181430 -t 181530
     $ f -w "a deadline" -a "uni" -t 10011200
 
