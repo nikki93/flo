@@ -208,6 +208,7 @@ static int verify_args(const struct args *a) {
 
 static void list_items(const struct item* items) {
 	int i;
+	int deadline = 0;
 	struct item it;
 	struct tm *tm;
 	char s[17];
@@ -218,16 +219,22 @@ static void list_items(const struct item* items) {
 		if (it.what == NULL)
 			break;
 
-		printf("% 2d  ", i);
+		printf("% 4d  ", i);
 
-		if (it.from != 0) {
-			tm = localtime(&it.from);
-			strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
-			printf("%s", s);
+		deadline = it.from == 0 && it.to != 0;
+
+		if (!deadline) {
+			if (it.from != 0) {
+				tm = localtime(&it.from);
+				strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
+				printf("%s  ", s);
+			}
 		}
-
-		if (it.from != 0 || it.to != 0)
-			printf("  ");
+		else {
+			tm = localtime(&it.to);
+			strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
+			printf("%s* ", s);
+		}
 
 		printf("%s", it.what);
 
@@ -236,10 +243,12 @@ static void list_items(const struct item* items) {
 
 		printf("\n");
 
-		if (it.to != 0) {
-			tm = localtime(&it.to);
-			strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
-			printf("    %s\n", s);
+		if (!deadline) {
+			if (it.to != 0) {
+				tm = localtime(&it.to);
+				strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
+				printf("    %s\n", s);
+			}
 		}
 	}
 }
