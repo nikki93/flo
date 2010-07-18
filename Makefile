@@ -1,4 +1,6 @@
 f: f.c
-	cc -o f f.c
+	cc f.c -Wall -o f
 clean:
-	rm f
+	rm -rf f *.o
+log:
+	git log '--pretty=format:%ad %s (%cn)' --date=short > changelog
