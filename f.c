@@ -247,7 +247,7 @@ static void list_items(const struct item* items) {
 			if (it.to != 0) {
 				tm = localtime(&it.to);
 				strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
-				printf("    %s\n", s);
+				printf("      %s\n", s);
 			}
 		}
 	}
