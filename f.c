@@ -174,12 +174,12 @@ static int write_to_file(struct args *a, const time_t from, const time_t to) {
 	fprintf(f, "\t");
 
 	if (from != 0)
-		fprintf(f, "%d", from);
+		fprintf(f, "%llu", (unsigned long long)from);
 
 	fprintf(f, "\t");
 
 	if (to != 0)
-		fprintf(f, "%d", to);
+		fprintf(f, "%llu", (unsigned long long)to);
 
 	fprintf(f, "\n");
 	fclose(f);
