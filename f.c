@@ -20,7 +20,7 @@ struct item {
 
 static void fail(struct args *a, const char *e, int show_usage);
 
-static int read_args(struct args *a, int argc, char *argv[]) {
+static int read_args(struct args *a, const int argc, char *argv[]) {
 	char c;
 
 	while ((c = getopt(argc, argv, "w:a:f:t:")) != -1) {
@@ -79,9 +79,8 @@ static void inc_month(struct tm *tm, const char *s) {
 	day = atoi(day_tmp);
 
 	if (day < tm->tm_mday) {
-		if (tm->tm_mon < 11) {
+		if (tm->tm_mon < 11)
 			tm->tm_mon += 1;
-		}
 		else {
 			tm->tm_mon = 0;
 			tm->tm_year++;
@@ -93,7 +92,7 @@ static void inc_month(struct tm *tm, const char *s) {
 	Add the current year or year and month to date string if the date specified
 	is in a short format.
 */
-static int complete_datestr(char *ds, char *s) {
+static int complete_datestr(char *s1, const char *s2) {
 	time_t t;
 	struct tm *tm;
 	char year[5];
@@ -102,18 +101,18 @@ static int complete_datestr(char *ds, char *s) {
 	time(&t);
 	tm = localtime(&t);
 
-	switch (strlen(s)) {
+	switch (strlen(s2)) {
+		case 2:
+		case 4:
+		case 6:
+			inc_month(tm, s2);
+			set_year_and_month(year, month, tm);
+			strcat(s1, year);
+			strcat(s1, month);
+			break;
 		case 8:
 			set_year_and_month(year, month, tm);
-			strcat(ds, year);
-			break;
-		case 6:
-		case 4:
-		case 2:
-			inc_month(tm, s);
-			set_year_and_month(year, month, tm);
-			strcat(ds, year);
-			strcat(ds, month);
+			strcat(s1, year);
 			break;
 		case 12:
 			break;
@@ -121,31 +120,32 @@ static int complete_datestr(char *ds, char *s) {
 			return 0;
 	}
 
-	strcat(ds, s);
+	strcat(s1, s2);
 
-	switch (strlen(s)) {
+	switch (strlen(s2)) {
 		case 2:
-			strcat(ds, "00");
+			strcat(s1, "00");
 		case 4:
-			strcat(ds, "00");
+			strcat(s1, "00");
 			break;
 	}
 
-	strcat(ds, "00");
+	strcat(s1, "00");
 
 	return 1;
 }
 
-static int datestr_to_time(time_t *t, char *ds) {
+static int datestr_to_time(time_t *t, const char *s) {
 	struct tm tm;
 
 	memset(&tm, 0, sizeof(struct tm));
 
-	if (strptime(ds, "%Y%m%d%H%M%S", &tm) == 0)
+	if (strptime(s, "%Y%m%d%H%M%S", &tm) == 0)
 		return 0;
 	else {
 		tm.tm_isdst = -1;
 		*t = mktime(&tm);
+
 		return 1;
 	}
 }
@@ -154,38 +154,32 @@ static void get_filename(char *s) {
 	sprintf(s, "%s/.f", getenv("HOME"));
 }
 
-static int write_to_file(struct args *a, time_t from, time_t to) {
+static int write_to_file(struct args *a, const time_t from, const time_t to) {
 	FILE *f;
 	char fn[256];
-
-	memset(fn, 0, sizeof(fn));
 
 	get_filename(fn);
 
 	if ((f = fopen(fn, "a")) == NULL)
 		return 0;
 
-	if (a->what != 0) {
+	if (a->what != 0)
 		fprintf(f, "%s", a->what);
-	}
 
 	fprintf(f, "\t");
 
-	if (a->at != 0) {
+	if (a->at != 0)
 		fprintf(f, "%s", a->at);
-	}
 
 	fprintf(f, "\t");
 
-	if (from != 0) {
+	if (from != 0)
 		fprintf(f, "%d", from);
-	}
 
 	fprintf(f, "\t");
 
-	if (to != 0) {
+	if (to != 0)
 		fprintf(f, "%d", to);
-	}
 
 	fprintf(f, "\n");
 	fclose(f);
@@ -193,7 +187,7 @@ static int write_to_file(struct args *a, time_t from, time_t to) {
 	return 1;
 }
 
-static void fail(struct args *a, const char *e, int show_usage) {
+static void fail(struct args *a, const char *e, const int show_usage) {
 	if (e != NULL)
 		puts(e);
 
@@ -205,14 +199,14 @@ static void fail(struct args *a, const char *e, int show_usage) {
 	exit(EXIT_FAILURE);
 }
 
-static int verify_args(struct args *a) {
+static int verify_args(const struct args *a) {
 	if (a->what == 0)
 		return 0;
 
 	return 1;
 }
 
-static void list_items(struct item* items) {
+static void list_items(const struct item* items) {
 	int i;
 	struct item it;
 	struct tm *tm;
@@ -237,15 +231,13 @@ static void list_items(struct item* items) {
 			printf("%s", s);
 		}
 
-		if (it.from != 0 || it.to != 0) {
+		if (it.from != 0 || it.to != 0)
 			printf(": ");
-		}
 
 		printf("%s", it.what);
 
-		if (it.at != NULL) {
+		if (it.at != NULL)
 			printf("@%s", items[i].at);
-		}
 
 		printf("\n");
 	}
@@ -263,7 +255,7 @@ static void free_items(struct item* items) {
 	}
 }
 
-static void parse_read_item(struct item *item, char *line) {
+static void parse_read_item(struct item *it, char *line) {
 	int col;
 	char *token = NULL;
 	char *delims = "\t";
@@ -272,23 +264,23 @@ static void parse_read_item(struct item *item, char *line) {
 		switch (col) {
 			case 0:
 				if (strlen(token) > 0) {
-					item->what = malloc(strlen(token) + 1);
-					strcpy(item->what, token);
+					it->what = malloc(strlen(token) + 1);
+					strcpy(it->what, token);
 				}
 
 				break;
 			case 1:
 				if (strlen(token) > 0) {
-					item->at = malloc(strlen(token) + 1);
-					strcpy(item->at, token);
+					it->at = malloc(strlen(token) + 1);
+					strcpy(it->at, token);
 				}
 
 				break;
 			case 2:
-				item->from = atoi(token);
+				it->from = atoi(token);
 				break;
 			case 3:
-				item->to = atoi(token);
+				it->to = atoi(token);
 				break;
 		}
 	}
@@ -301,8 +293,6 @@ static int read_items(struct item* items) {
 	ssize_t read;
 	char *line = NULL;
 	size_t len = 0;
-
-	memset(fn, 0, sizeof(fn));
 
 	get_filename(fn);
 
@@ -374,10 +364,8 @@ static int main_add_item(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
-	if (argc < 2) {
+	if (argc < 2)
 		return main_list_items();
-	}
-	else {
+	else
 		return main_add_item(argc, argv);
-	}
 }
