@@ -225,7 +225,15 @@ static void list_items(const struct item* items) {
 		if (it->what == NULL)
 			break;
 
-		if (IS_EVENT(it)) {
+		if (IS_DEADLINE(it)) {
+			tm = localtime(&it->to);
+			strftime(s, sizeof(s), DATE_FORMAT, tm);
+			printf("d% 3d  %s  %s\n", i, s, it->what);
+		}
+		else if (IS_TODO(it)) {
+			printf("% 4d  %s\n", i, it->what);
+		}
+		else {
 			tm = localtime(&it->from);
 			strftime(s, sizeof(s), DATE_FORMAT, tm);
 			printf("% 4d  %s  %s\n", i, s, it->what);
@@ -235,14 +243,6 @@ static void list_items(const struct item* items) {
 				strftime(s, sizeof(s), DATE_FORMAT, tm);
 				printf("      %s\n", s);
 			}
-		}
-		else if (IS_DEADLINE(it)) {
-			tm = localtime(&it->to);
-			strftime(s, sizeof(s), DATE_FORMAT, tm);
-			printf("d% 3d  %s  %s\n", i, s, it->what);
-		}
-		else if (IS_TODO(it)) {
-			printf("% 4d  %s\n", i, it->what);
 		}
 	}
 }
