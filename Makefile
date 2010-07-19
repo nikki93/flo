@@ -1,4 +1,4 @@
-f: f.c
-	cc f.c -Wall -o f -O2
+flo: flo.c
+	cc flo.c -Wall -o flo -O2
 clean:
-	rm -rf f *.o
+	rm -f flo

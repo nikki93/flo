@@ -158,7 +158,7 @@ static int datestr_to_time(time_t *t, const char *s) {
 }
 
 static void get_filename(char *s) {
-	sprintf(s, "%s/.f", getenv("HOME"));
+	sprintf(s, "%s/.flo", getenv("HOME"));
 }
 
 static int write_to_file(struct args *a, const time_t from, const time_t to) {
@@ -392,7 +392,7 @@ int main_add_item(int argc, char *argv[]) {
 	}
 
 	if (write_to_file(&a, from, to) == 0)
-		fail(&a, "Could not write to ~/.f.", 0);
+		fail(&a, "Could not write to ~/.flo.", 0);
 
 	free_args(&a);
 
