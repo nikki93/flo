@@ -5,6 +5,11 @@
 #include <time.h>
 #include <unistd.h>
 
+#define _IS_DEADLINE(it) (it.from == 0 && it.to != 0)
+#define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
+#define IS_TODO(it) (it->from == 0 && it->to == 0)
+#define IS_EVENT(it) (!IS_TODO(it) && !IS_DEADLINE(it))
+
 struct args {
 	char *what;
 	char *at;
@@ -209,7 +214,6 @@ static int verify_args(const struct args *a) {
 
 static void list_items(const struct item* items) {
 	int i;
-	int deadline = 0;
 	struct item it;
 	struct tm *tm;
 	char s[17];
@@ -222,9 +226,7 @@ static void list_items(const struct item* items) {
 
 		printf("% 4d  ", i);
 
-		deadline = it.from == 0 && it.to != 0;
-
-		if (!deadline) {
+		if (!_IS_DEADLINE(it)) {
 			if (it.from != 0) {
 				tm = localtime(&it.from);
 				strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
@@ -234,7 +236,7 @@ static void list_items(const struct item* items) {
 		else {
 			tm = localtime(&it.to);
 			strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
-			printf("%s* ", s);
+			printf("%sd ", s);
 		}
 
 		printf("%s", it.what);
@@ -244,7 +246,7 @@ static void list_items(const struct item* items) {
 
 		printf("\n");
 
-		if (!deadline) {
+		if (!_IS_DEADLINE(it)) {
 			if (it.to != 0) {
 				tm = localtime(&it.to);
 				strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
@@ -321,7 +323,23 @@ static int read_items(struct item* items) {
 }
 
 static int sort_items(const void *a, const void *b) {
-	return ((struct item *)a)->from > ((struct item *)b)->from;
+	struct item *ia = (struct item *)a;
+	struct item *ib = (struct item *)b;
+
+	if (IS_EVENT(ia) && !IS_EVENT(ib))
+		return -1;
+	else if (IS_DEADLINE(ia) && !IS_DEADLINE(ib)) {
+		if (IS_TODO(ib))
+			return -1;
+		else
+			return 1;	
+	}
+	else if (IS_TODO(ia) && !IS_TODO(ib))
+		return 1;
+	else
+		return ia->from > ib->from;
+
+	return 0;
 }
 
 static int main_list_items() {
