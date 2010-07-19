@@ -199,7 +199,7 @@ static void fail(struct args *a, const char *e, const int show_usage) {
 		puts(e);
 
 	if (show_usage)
-		puts("Usage: f [-w what [-a at -f [[YYYY]MM]DD[hh[mm]] -t [[YYYY]MM]DD[hh[mm]]]]");
+		puts("Usage: f [-w what [-a at -f from -t to");
 
 	free_args(a);
 
