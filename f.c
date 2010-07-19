@@ -5,6 +5,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#define LIST_ITEMS 128
 #define _IS_DEADLINE(it) (it.from == 0 && it.to != 0)
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
 #define IS_TODO(it) (it->from == 0 && it->to == 0)
@@ -218,7 +219,7 @@ static void list_items(const struct item* items) {
 	struct tm *tm;
 	char s[17];
 
-	for (i = 0; i < 1024; i++) {
+	for (i = 0; i < LIST_ITEMS; i++) {
 		it = items[i];
 
 		if (it.what == NULL)
@@ -259,7 +260,7 @@ static void list_items(const struct item* items) {
 static void free_items(struct item* items) {
 	int i;
 
-	for (i = 0; i < 1024; i++) {
+	for (i = 0; i < LIST_ITEMS; i++) {
 		if (items[i].what == 0)
 			break;
 
@@ -346,7 +347,7 @@ static int main_list_items() {
 	int n;
 	struct item *items;
 
-	items = (struct item *)calloc(1024, sizeof(struct item));
+	items = (struct item *)calloc(LIST_ITEMS, sizeof(struct item));
 
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
