@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #define LIST_ITEMS 128
-#define _IS_DEADLINE(it) (it.from == 0 && it.to != 0)
+#define DATE_FORMAT "%Y-%m-%d %H:%M"
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
 #define IS_TODO(it) (it->from == 0 && it->to == 0)
 #define IS_EVENT(it) (!IS_TODO(it) && !IS_DEADLINE(it))
@@ -215,44 +215,34 @@ static int verify_args(const struct args *a) {
 
 static void list_items(const struct item* items) {
 	int i;
-	struct item it;
+	struct item *it;
 	struct tm *tm;
 	char s[17];
 
 	for (i = 0; i < LIST_ITEMS; i++) {
-		it = items[i];
+		it = (struct item *)&items[i];
 
-		if (it.what == NULL)
+		if (it->what == NULL)
 			break;
 
-		printf("% 4d  ", i);
+		if (IS_EVENT(it)) {
+			tm = localtime(&it->from);
+			strftime(s, sizeof(s), DATE_FORMAT, tm);
+			printf("% 4d  %s  %s\n", i, s, it->what);
 
-		if (!_IS_DEADLINE(it)) {
-			if (it.from != 0) {
-				tm = localtime(&it.from);
-				strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
-				printf("%s  ", s);
-			}
-		}
-		else {
-			tm = localtime(&it.to);
-			strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
-			printf("%sd ", s);
-		}
-
-		printf("%s", it.what);
-
-		if (it.at != NULL)
-			printf("@%s", items[i].at);
-
-		printf("\n");
-
-		if (!_IS_DEADLINE(it)) {
-			if (it.to != 0) {
-				tm = localtime(&it.to);
-				strftime(s, sizeof(s), "%Y-%m-%d %H:%M", tm);
+			if (it->to != 0) {
+				tm = localtime(&it->to);
+				strftime(s, sizeof(s), DATE_FORMAT, tm);
 				printf("      %s\n", s);
 			}
+		}
+		else if (IS_DEADLINE(it)) {
+			tm = localtime(&it->to);
+			strftime(s, sizeof(s), DATE_FORMAT, tm);
+			printf("d% 3d  %s  %s\n", i, s, it->what);
+		}
+		else if (IS_TODO(it)) {
+			printf("% 4d  %s\n", i, it->what);
 		}
 	}
 }
