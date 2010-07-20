@@ -96,8 +96,8 @@ static void inc_month(struct tm *tm, const char *s) {
 }
 
 /*
-	Add the current year or year and month to date string if the date specified
-	is in a short format.
+	Add the current year or year and month to date string if the date
+	specified is in a short format.
 */
 static int complete_datestr(char *s1, const char *s2) {
 	time_t t;
@@ -199,7 +199,7 @@ static void fail(struct args *a, const char *e, const int show_usage) {
 		puts(e);
 
 	if (show_usage)
-		puts("Usage: f [-w what [-a at -f from -t to");
+		puts("Usage: flo [-w what [-a at | -f from | -t to]]");
 
 	free_args(a);
 

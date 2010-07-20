@@ -7,7 +7,7 @@ flo is a command line application that keeps you in check. It’s small and fast
     make
     cp flo /usr/local/bin/
 
-## usage
+## examples
 
     $ flo -w "clean apartment"
     $ flo -w "eat lunch" -a "some cafe" -f 181430 -t 181530
@@ -19,9 +19,13 @@ flo is a command line application that keeps you in check. It’s small and fast
     d  1  2010-10-01 12:00  a deadline
        2  clean apartment
 
+## usage
+
+    flo [-w what [-a at | -f from | -t to]]
+
 ### date format
 
-These are the valid date formats:
+These are the valid date formats that can be passed to `-f` and `-t`:
 
     YYMMDDhhmm
       MMDDhhmm
