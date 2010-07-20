@@ -25,7 +25,7 @@ flo is a command line application that keeps you in check. It’s small and fast
 
 ### date format
 
-These are the valid date formats that can be passed to `-f` and `-t`:
+These are the date formats that can be passed to `-f` and `-t`:
 
     YYMMDDhhmm
       MMDDhhmm
@@ -33,9 +33,9 @@ These are the valid date formats that can be passed to `-f` and `-t`:
         DDhh
         DD
 
-For the shorter formats, if the year or the month isn’t specified, the current
-year and month is used. For formats without a month, if the date specified is
-before the current date, the month is set to the next month.
+If the year or the month isn’t specified, the current year and month is used.
+For formats without a month, if the date specified is before today’s date, the
+month is set to the next month.
 
 The value for hours and minutes is set to `00` if no other value is specified.
 
