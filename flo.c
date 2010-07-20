@@ -247,7 +247,7 @@ static void list_items(const struct item* items) {
 	}
 }
 
-static void free_items(struct item* items) {
+static void free_items(struct item *items) {
 	int i;
 
 	for (i = 0; i < LIST_ITEMS; i++) {
@@ -290,7 +290,7 @@ static void parse_read_item(struct item *it, char *line) {
 	}
 }
 
-static int read_items(struct item* items) {
+static int read_items(struct item *items) {
 	char fn[256];
 	FILE *f;
 	int n;
