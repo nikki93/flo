@@ -230,9 +230,8 @@ static void list_items(const struct item* items) {
 			strftime(s, sizeof(s), DATE_FORMAT, tm);
 			printf("d% 3d  %s  %s\n", i, s, it->what);
 		}
-		else if (IS_TODO(it)) {
+		else if (IS_TODO(it))
 			printf("% 4d  %s\n", i, it->what);
-		}
 		else {
 			tm = localtime(&it->from);
 			strftime(s, sizeof(s), DATE_FORMAT, tm);
@@ -325,9 +324,8 @@ static int sort_items(const void *a, const void *b) {
 		else
 			return 1;	
 	}
-	else if (IS_DEADLINE(ia) && IS_DEADLINE(ib)) {
+	else if (IS_DEADLINE(ia) && IS_DEADLINE(ib))
 		return ia->to > ib->to;
-	}
 	else if (IS_TODO(ia) && !IS_TODO(ib))
 		return 1;
 	else
