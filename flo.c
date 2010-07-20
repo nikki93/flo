@@ -258,7 +258,7 @@ static void free_items(struct item *items) {
 	}
 }
 
-static void parse_read_item(struct item *it, char *line) {
+static void line_to_item(struct item *it, char *line) {
 	int col;
 	char *token = NULL;
 	char *delims = "\t";
@@ -304,7 +304,7 @@ static int read_items(struct item *items) {
 
 	for (n = 0; (read = getline(&line, &len, f)) != -1; n++) {
 		line[read - 1] = '\0'; /* remove newline */
-		parse_read_item(&items[n], line);
+		line_to_item(&items[n], line);
 	}
 
 	fclose(f);
