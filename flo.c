@@ -357,7 +357,7 @@ int main_add_item(int argc, char *argv[]) {
 	memset(&a, 0, sizeof(struct args));
 
 	if (read_args(&a, argc, argv) == 0)
-		fail(&a, "Could not parse arguments.", 1);
+		fail(&a, NULL, 1);
 
 	if (verify_args(&a) == 0)
 		fail(&a, NULL, 1);
