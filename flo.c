@@ -249,14 +249,30 @@ static void print_items(const struct item* items, const int n) {
 		if (IS_DEADLINE(it)) {
 			tm = localtime(&it->to);
 			strftime(s, sizeof(s), DATE_FORMAT, tm);
-			printf("d% 3d  %s  %s\n", i, s, it->what);
+			printf("d% 3d  %s  %s", i, s, it->what);
+
+			if (it->at != 0)
+				printf("@%s", it->at);
+
+			printf("\n");
 		}
-		else if (IS_TODO(it))
-			printf("% 4d  %s\n", i, it->what);
+		else if (IS_TODO(it)) {
+			printf("% 4d  %s", i, it->what);
+
+			if (it->at != 0)
+				printf("@%s", it->at);
+
+			printf("\n");
+		}
 		else {
 			tm = localtime(&it->from);
 			strftime(s, sizeof(s), DATE_FORMAT, tm);
-			printf("% 4d  %s  %s\n", i, s, it->what);
+			printf("% 4d  %s  %s", i, s, it->what);
+
+			if (it->at != 0)
+				printf("@%s", it->at);
+
+			printf("\n");
 
 			if (it->to != 0) {
 				tm = localtime(&it->to);
@@ -452,11 +468,15 @@ static int change_item(struct args *a) {
 
 	it = &items[a->id];
 
-	if (a->what != 0)
+	if (a->what != 0) {
+		it->what = malloc(strlen(a->what) + 1);
 		strcpy(it->what, a->what);
+	}
 
-	if (a->at != 0)
+	if (a->at != 0) {
+		it->at = malloc(strlen(a->at) + 1);
 		strcpy(it->at, a->at);
+	}
 
 	if (a->from != 0)
 		if (parse_date(&it->from, a->from) == 0)

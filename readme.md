@@ -7,7 +7,7 @@ flo is a command line application that keeps you in check. It’s small and fast
     make
     cp flo /usr/local/bin/
 
-## examples
+## getting started
 
 ### add todo
 
