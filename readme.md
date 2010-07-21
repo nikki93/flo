@@ -11,38 +11,38 @@ flo is a command line application that keeps you in check. It’s small and fast
 
 ### add todo
 
- $ flo -w "clean apartment"
-   0  clean apartment
+     $ flo -w "clean apartment"
+       0  clean apartment
 
 ### add event
 
- $ flo -w "eat lunch" -a "some cafe" -f 221200 -t 221245
-   0  2010-07-22 12:00  eat lunch
-      2010-07-22 12:45
-   1  clean apartment
+     $ flo -w "eat lunch" -a "some cafe" -f 221200 -t 221245
+       0  2010-07-22 12:00  eat lunch
+          2010-07-22 12:45
+       1  clean apartment
 
 ### add deadline
 
- $ flo -w "a deadline" -a "uni" -t 10011200
-   0  2010-07-22 12:00  eat lunch
-      2010-07-22 12:45
-d  1  2010-10-01 12:00  a deadline
-   2  clean apartment
+     $ flo -w "a deadline" -a "uni" -t 10011200
+       0  2010-07-22 12:00  eat lunch
+          2010-07-22 12:45
+    d  1  2010-10-01 12:00  a deadline
+       2  clean apartment
 
 ### change item
 
- $ flo -c 0 -f 221300 -t 221345
-   0  2010-07-22 13:00  eat lunch
-      2010-07-22 13:45
-d  1  2010-10-01 12:00  a deadline
-   2  clean apartment
+     $ flo -c 0 -f 221300 -t 221345
+       0  2010-07-22 13:00  eat lunch
+          2010-07-22 13:45
+    d  1  2010-10-01 12:00  a deadline
+       2  clean apartment
 
 ### remove item
 
- $ flo -r 2
-   0  2010-07-22 13:00  eat lunch
-      2010-07-22 13:45
-d  1  2010-10-01 12:00  a deadline
+     $ flo -r 2
+       0  2010-07-22 13:00  eat lunch
+          2010-07-22 13:45
+    d  1  2010-10-01 12:00  a deadline
 
 ## usage
 
