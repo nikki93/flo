@@ -16,6 +16,9 @@ struct args {
 	char *at;
 	char *from;
 	char *to;
+	int change;
+	int remove;
+	int id;
 };
 
 struct item {
@@ -30,8 +33,16 @@ static void fail(struct args *a, const char *e, int show_usage);
 static int read_args(struct args *a, const int argc, char *argv[]) {
 	char c;
 
-	while ((c = getopt(argc, argv, "w:a:f:t:")) != -1) {
+	while ((c = getopt(argc, argv, "c:r:w:a:f:t:")) != -1) {
 		switch (c) {
+			case 'c':
+				a->change = 1;
+				a->id = atoi(optarg);
+				break;
+			case 'r':
+				a->remove = 1;
+				a->id = atoi(optarg);
+				break;
 			case 'w':
 				a->what = malloc(strlen(optarg) + 1);
 				strcpy(a->what, optarg);
@@ -161,22 +172,20 @@ static void get_filename(char *s) {
 	sprintf(s, "%s/.flo", getenv("HOME"));
 }
 
-static int write_to_file(struct args *a, const time_t from, const time_t to) {
-	FILE *f;
-	char fn[256];
+static int print_item_to_stream(
+	FILE *f,
+	const char *what,
+	const char* at,
+	time_t from,
+	time_t to) {
 
-	get_filename(fn);
-
-	if ((f = fopen(fn, "a")) == NULL)
-		return 0;
-
-	if (a->what != 0)
-		fprintf(f, "%s", a->what);
+	if (what != 0)
+		fprintf(f, "%s", what);
 
 	fprintf(f, "\t");
 
-	if (a->at != 0)
-		fprintf(f, "%s", a->at);
+	if (at != 0)
+		fprintf(f, "%s", at);
 
 	fprintf(f, "\t");
 
@@ -189,6 +198,21 @@ static int write_to_file(struct args *a, const time_t from, const time_t to) {
 		fprintf(f, "%llu", (unsigned long long)to);
 
 	fprintf(f, "\n");
+
+	return 1;
+}
+
+static int write_to_file(struct args *a, const time_t from, const time_t to) {
+	FILE *f;
+	char fn[256];
+
+	get_filename(fn);
+
+	if ((f = fopen(fn, "a")) == NULL)
+		return 0;
+
+	print_item_to_stream(f, a->what, a->at, from, to);
+
 	fclose(f);
 
 	return 1;
@@ -199,7 +223,7 @@ static void fail(struct args *a, const char *e, const int show_usage) {
 		puts(e);
 
 	if (show_usage)
-		puts("Usage: flo [-w what [-a at | -f from | -t to]]");
+		puts("Usage: flo [-r id || [-c id] -w what | -a at | -f from | -t to]");
 
 	free_args(a);
 
@@ -213,17 +237,14 @@ static int verify_args(const struct args *a) {
 	return 1;
 }
 
-static void list_items(const struct item* items) {
+static void print_items(const struct item* items, const int n) {
 	int i;
 	struct item *it;
 	struct tm *tm;
 	char s[17];
 
-	for (i = 0; i < LIST_ITEMS; i++) {
+	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
-
-		if (it->what == NULL)
-			break;
 
 		if (IS_DEADLINE(it)) {
 			tm = localtime(&it->to);
@@ -312,6 +333,33 @@ static int read_items(struct item *items) {
 	return n;
 }
 
+static int write_items(const struct item *items, const int n, int except) {
+	char fn[256];
+	FILE *f;
+	int i;
+
+	get_filename(fn);
+
+	if ((f = fopen(fn, "w")) == NULL)
+		return 0;
+
+	for (i = 0; i < n; i++) {
+		if (i == except)
+			continue;
+
+		print_item_to_stream(
+			f,
+			items[i].what,
+			items[i].at,
+			items[i].from,
+			items[i].to);
+	}
+
+	fclose(f);
+
+	return 1;
+}
+
 static int sort_items(const void *a, const void *b) {
 	struct item *ia = (struct item *)a;
 	struct item *ib = (struct item *)b;
@@ -334,7 +382,7 @@ static int sort_items(const void *a, const void *b) {
 	return 0;
 }
 
-static int main_list_items() {
+static int list_items() {
 	int n;
 	struct item *items;
 
@@ -342,57 +390,132 @@ static int main_list_items() {
 
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
-	list_items(items);
+	print_items(items, n);
 	free_items(items);
 
 	return EXIT_SUCCESS;
 }
 
-int main_add_item(int argc, char *argv[]) {
-	struct args a;
-	char s[15];
+static int parse_date(time_t *t, const char *s) {
+	char s2[15];
+	memset(s2, 0, sizeof(s2));
+
+	if (complete_datestr(s2, s) == 0)
+		return 0;
+
+	if (datestr_to_time(t, s2) == 0)
+		return 0;
+
+	return 1;
+}
+
+static int add_item(struct args *a) {
 	time_t from = 0;
 	time_t to = 0;
 
-	memset(&a, 0, sizeof(struct args));
+	if (verify_args(a) == 0)
+		fail(a, NULL, 1);
 
-	if (read_args(&a, argc, argv) == 0)
-		fail(&a, NULL, 1);
+	if (a->from != 0)
+		if (parse_date(&from, a->from) == 0)
+			fail(a, "Could not parse from-date.", 1);
 
-	if (verify_args(&a) == 0)
-		fail(&a, NULL, 1);
+	if (a->to != 0)
+		if (parse_date(&to, a->to) == 0)
+			fail(a, "Could not parse to-date.", 1);
 
-	memset(&s, 0, sizeof(s));
+	if (write_to_file(a, from, to) == 0)
+		fail(a, "Could not write to ~/.flo.", 0);
 
-	if (a.from != 0) {
-		if (complete_datestr(s, a.from) == 0)
-			fail(&a, "Could not complete from-date.", 1);
+	free_args(a);
 
-		if (datestr_to_time(&from, s) == 0)
-			fail(&a, "Could not convert from-date string to time.", 1);
+	return list_items();
+}
+
+static int change_item(struct args *a) {
+	int n;
+	struct item *items;
+	struct item *it;
+
+	items = (struct item *)calloc(LIST_ITEMS, sizeof(struct item));
+
+	n = read_items(items);
+
+	if (a->id < 0 || a->id > n) {
+		free_items(items);
+		fail(a, "Could not find item.", 0);
+
+		return EXIT_FAILURE;
 	}
 
-	memset(&s, 0, sizeof(s));
+	qsort(items, n, sizeof(struct item), sort_items);
 
-	if (a.to != 0) {
-		if (complete_datestr(s, a.to) == 0)
-			fail(&a, "Could not complete to-date.", 1);
+	it = &items[a->id];
 
-		if (datestr_to_time(&to, s) == 0)
-			fail(&a, "Could not convert to-date string to time.", 1);
+	if (a->what != 0)
+		strcpy(it->what, a->what);
+
+	if (a->at != 0)
+		strcpy(it->at, a->at);
+
+	if (a->from != 0)
+		if (parse_date(&it->from, a->from) == 0)
+			fail(a, "Could not parse from-date.", 1);
+
+	if (a->to != 0)
+		if (parse_date(&it->to, a->to) == 0)
+			fail(a, "Could not parse to-date.", 1);
+
+	write_items(items, n, -1);
+	print_items(items, n);
+	
+	free_args(a);
+	free_items(items);
+
+	return EXIT_SUCCESS;
+}
+
+static int remove_item(struct args *a) {
+	int n;
+	struct item *items;
+
+	items = (struct item *)calloc(LIST_ITEMS, sizeof(struct item));
+
+	n = read_items(items);
+
+	if (a->id < 0 || a->id > n) {
+		free_items(items);
+		fail(a, "Could not find item.", 0);
+
+		return EXIT_FAILURE;
 	}
 
-	if (write_to_file(&a, from, to) == 0)
-		fail(&a, "Could not write to ~/.flo.", 0);
+	qsort(items, n, sizeof(struct item), sort_items);
 
-	free_args(&a);
+	write_items(items, n, a->id);
 
-	return main_list_items();
+	free_args(a);
+	free_items(items);
+
+	return list_items();
 }
 
 int main(int argc, char *argv[]) {
+	struct args a;
+
 	if (argc < 2)
-		return main_list_items();
-	else
-		return main_add_item(argc, argv);
+		return list_items();
+	else {
+		memset(&a, 0, sizeof(struct args));
+
+		if (read_args(&a, argc, argv) == 0)
+			fail(&a, NULL, 1);
+
+		if (a.change != 0)
+			return change_item(&a);
+		else if (a.remove != 0)
+			return remove_item(&a);
+		else
+			return add_item(&a);
+	}
 }
