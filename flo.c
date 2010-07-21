@@ -386,7 +386,7 @@ static int sort_items(const void *a, const void *b) {
 		if (IS_TODO(ib))
 			return -1;
 		else
-			return 1;	
+			return ia->to > ib->from;
 	}
 	else if (IS_DEADLINE(ia) && IS_DEADLINE(ib))
 		return ia->to > ib->to;
