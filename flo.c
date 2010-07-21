@@ -293,6 +293,8 @@ static void free_items(struct item *items) {
 		free(items[i].what);
 		free(items[i].at);
 	}
+
+	free(items);
 }
 
 static void line_to_item(struct item *it, char *line) {
@@ -343,6 +345,8 @@ static int read_items(struct item *items) {
 		line[read - 1] = '\0'; /* remove newline */
 		line_to_item(&items[n], line);
 	}
+
+	free(line);
 
 	fclose(f);
 
@@ -407,6 +411,7 @@ static int list_items() {
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
 	print_items(items, n);
+
 	free_items(items);
 
 	return EXIT_SUCCESS;
