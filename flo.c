@@ -283,13 +283,10 @@ static void print_items(const struct item* items, const int n) {
 	}
 }
 
-static void free_items(struct item *items) {
+static void free_items(struct item *items, const int n) {
 	int i;
 
-	for (i = 0; i < LIST_ITEMS; i++) {
-		if (items[i].what == 0)
-			break;
-
+	for (i = 0; i < n; i++) {
 		free(items[i].what);
 		free(items[i].at);
 	}
@@ -412,7 +409,7 @@ static int list_items() {
 	qsort(items, n, sizeof(struct item), sort_items);
 	print_items(items, n);
 
-	free_items(items);
+	free_items(items, n);
 
 	return EXIT_SUCCESS;
 }
@@ -463,7 +460,7 @@ static int change_item(struct args *a) {
 	n = read_items(items);
 
 	if (a->id < 0 || a->id > n) {
-		free_items(items);
+		free_items(items, n);
 		fail(a, "Could not find item.", 0);
 
 		return EXIT_FAILURE;
@@ -494,7 +491,7 @@ static int change_item(struct args *a) {
 	write_items(items, n, -1);
 	
 	free_args(a);
-	free_items(items);
+	free_items(items, n);
 
 	return list_items();
 }
@@ -508,7 +505,7 @@ static int remove_item(struct args *a) {
 	n = read_items(items);
 
 	if (a->id < 0 || a->id > n) {
-		free_items(items);
+		free_items(items, n);
 		fail(a, "Could not find item.", 0);
 
 		return EXIT_FAILURE;
@@ -519,7 +516,7 @@ static int remove_item(struct args *a) {
 	write_items(items, n, a->id);
 
 	free_args(a);
-	free_items(items);
+	free_items(items, n);
 
 	return list_items();
 }
