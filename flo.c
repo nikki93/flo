@@ -329,21 +329,16 @@ static int read_items(struct item *items) {
 	char fn[256];
 	FILE *f;
 	int n;
-	ssize_t read;
-	char *line = NULL;
-	size_t len = 0;
+	char line[1024];
 
 	get_filename(fn);
 
 	if ((f = fopen(fn, "r")) == NULL)
 		return 0;
 
-	for (n = 0; (read = getline(&line, &len, f)) != -1; n++) {
-		line[read - 1] = '\0'; /* remove newline */
+	for (n = 0; (fgets(line, 1024, f)) != NULL; n++) {
 		line_to_item(&items[n], line);
 	}
-
-	free(line);
 
 	fclose(f);
 
@@ -471,11 +466,13 @@ static int change_item(struct args *a) {
 	it = &items[a->id];
 
 	if (a->what != 0) {
+		free(it->what);
 		it->what = malloc(strlen(a->what) + 1);
 		strcpy(it->what, a->what);
 	}
 
 	if (a->at != 0) {
+		free(it->at);
 		it->at = malloc(strlen(a->at) + 1);
 		strcpy(it->at, a->at);
 	}
