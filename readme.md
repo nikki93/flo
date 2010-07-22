@@ -17,14 +17,14 @@ flo is a command line application that keeps you in check. It’s small and fast
 ### add event
 
      $ flo eat lunch@some cafe,221200-221245
-       0  2010-07-22 12:00  eat lunch
+       0  2010-07-22 12:00  eat lunch@some cafe
           2010-07-22 12:45
        1  clean apartment
 
 ### add deadline
 
      $ flo a deadline@uni-10011200
-       0  2010-07-22 12:00  eat lunch
+       0  2010-07-22 12:00  eat lunch@some cafe
           2010-07-22 12:45
     d  1  2010-10-01 12:00  a deadline
        2  clean apartment
@@ -32,7 +32,7 @@ flo is a command line application that keeps you in check. It’s small and fast
 ### change item
 
      $ flo -c 0 -f 221300 -t 221345
-       0  2010-07-22 13:00  eat lunch
+       0  2010-07-22 13:00  eat lunch@some cafe
           2010-07-22 13:45
     d  1  2010-10-01 12:00  a deadline
        2  clean apartment
@@ -40,7 +40,7 @@ flo is a command line application that keeps you in check. It’s small and fast
 ### remove item
 
      $ flo -r 2
-       0  2010-07-22 13:00  eat lunch
+       0  2010-07-22 13:00  eat lunch@some cafe
           2010-07-22 13:45
     d  1  2010-10-01 12:00  a deadline
 
@@ -48,9 +48,7 @@ flo is a command line application that keeps you in check. It’s small and fast
 
     flo [what[@at][,from][-to] || [-c id] -w what | -a at | -f from | -t to || -r id]
 
-### date format
-
-These are the date formats:
+### date formats
 
     YYMMDDhhmm
       MMDDhhmm
