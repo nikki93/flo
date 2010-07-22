@@ -30,6 +30,73 @@ struct item {
 
 static void fail(struct args *a, const char *e, int show_usage);
 
+static int last_index_of(const char *s, const char c) {
+	int i;
+
+	for (i = strlen(s) - 1; i >= 0; i--) {
+		if (s[i] == c)
+			return i;
+	}
+
+	return -1;
+}
+
+static int read_args_short(struct args *a, const int argc, char *argv[]) {
+	int i;
+	char line[1024];
+	char *rest;
+	int n;
+	int len;
+
+	memset(line, 0, sizeof(line));
+
+	for (i = 1; i < argc; i++) {
+		strcat(line, argv[i]);
+
+		if (i != (argc - 1))
+			strcat(line, " ");
+	}
+
+	n = last_index_of(line, '@');
+
+	if (n != -1) {
+		a->what = (char *)malloc(n + 1);
+		strncpy(a->what, line, n);
+		rest = &line[0] + n + 1;
+	}
+	else
+		rest = &line[0];
+
+	n = last_index_of(rest, '-');
+
+	if (n != -1) {
+		len = strlen(rest) - n - 1;
+		a->to = (char *)malloc(len);	
+		strncpy(a->to, rest + n + 1, len);
+		rest[n] = '\0';
+	}
+
+	n = last_index_of(rest, ',');
+
+	if (n != -1) {
+		len = strlen(rest) - n - 1;
+		a->from = (char *)malloc(len);	
+		strncpy(a->from, rest + n + 1, len);
+		rest[n] = '\0';
+	}
+
+	if (a->what == 0) {
+		a->what = (char *)malloc(strlen(rest) + 1);
+		strcpy(a->what, rest);	
+	}
+	else {
+		a->at = (char *)malloc(strlen(rest) + 1);
+		strcpy(a->at, rest);	
+	}
+
+	return 1;
+}
+
 static int read_args(struct args *a, const int argc, char *argv[]) {
 	char c;
 
@@ -223,7 +290,7 @@ static void fail(struct args *a, const char *e, const int show_usage) {
 		puts(e);
 
 	if (show_usage)
-		puts("Usage: flo [-r id || [-c id] -w what | -a at | -f from | -t to]");
+    		puts("Usage: flo [what[@at][,from][-to] || [-c id] -w what | -a at | -f from | -t to || -r id]");
 
 	free_args(a);
 
@@ -526,14 +593,22 @@ int main(int argc, char *argv[]) {
 	else {
 		memset(&a, 0, sizeof(struct args));
 
-		if (read_args(&a, argc, argv) == 0)
-			fail(&a, NULL, 1);
+		if (argv[1][0] != '-') {
+			if (read_args_short(&a, argc, argv) == 0)
+				fail(&a, NULL, 1);
 
-		if (a.change != 0)
-			return change_item(&a);
-		else if (a.remove != 0)
-			return remove_item(&a);
-		else
 			return add_item(&a);
+		}
+		else {
+			if (read_args(&a, argc, argv) == 0)
+				fail(&a, NULL, 1);
+
+			if (a.change != 0)
+				return change_item(&a);
+			else if (a.remove != 0)
+				return remove_item(&a);
+			else
+				return add_item(&a);
+		}
 	}
 }

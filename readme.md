@@ -11,19 +11,19 @@ flo is a command line application that keeps you in check. It’s small and fast
 
 ### add todo
 
-     $ flo -w "clean apartment"
+     $ flo clean apartment
        0  clean apartment
 
 ### add event
 
-     $ flo -w "eat lunch" -a "some cafe" -f 221200 -t 221245
+     $ flo eat lunch@some cafe,221200-221245
        0  2010-07-22 12:00  eat lunch
           2010-07-22 12:45
        1  clean apartment
 
 ### add deadline
 
-     $ flo -w "a deadline" -a "uni" -t 10011200
+     $ flo a deadline@uni-10011200
        0  2010-07-22 12:00  eat lunch
           2010-07-22 12:45
     d  1  2010-10-01 12:00  a deadline
@@ -46,11 +46,11 @@ flo is a command line application that keeps you in check. It’s small and fast
 
 ## usage
 
-    flo [-r id || [-c id] -w what | -a at | -f from | -t to]
+    flo [what[@at][,from][-to] || [-c id] -w what | -a at | -f from | -t to || -r id]
 
 ### date format
 
-These are the date formats that can be passed to `-f` and `-t`:
+These are the date formats:
 
     YYMMDDhhmm
       MMDDhhmm
