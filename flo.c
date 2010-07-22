@@ -492,12 +492,11 @@ static int change_item(struct args *a) {
 			fail(a, "Could not parse to-date.", 1);
 
 	write_items(items, n, -1);
-	print_items(items, n);
 	
 	free_args(a);
 	free_items(items);
 
-	return EXIT_SUCCESS;
+	return list_items();
 }
 
 static int remove_item(struct args *a) {
