@@ -5,7 +5,8 @@
 #include <time.h>
 #include <unistd.h>
 
-#define LIST_ITEMS 128
+#define LINE_LENGTH 1024
+#define ITEM_COUNT 128
 #define DATE_FORMAT "%Y-%m-%d %H:%M"
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
 #define IS_TODO(it) (it->from == 0 && it->to == 0)
@@ -28,7 +29,7 @@ struct item {
 	time_t to;
 };
 
-static void fail(struct args *a, const char *e, int show_usage);
+static void fail(struct args *a, const char *e, int print_usage);
 
 static int last_index_of(const char *s, const char c) {
 	int i;
@@ -43,7 +44,7 @@ static int last_index_of(const char *s, const char c) {
 
 static void read_args_short(struct args *a, const int argc, char *argv[]) {
 	int i;
-	char line[1024];
+	char line[LINE_LENGTH];
 	char *rest;
 	int n;
 	int len;
@@ -283,12 +284,13 @@ static int write_to_file(struct args *a, const time_t from, const time_t to) {
 	return 1;
 }
 
-static void fail(struct args *a, const char *e, const int show_usage) {
+static void fail(struct args *a, const char *e, const int print_usage) {
 	if (e != NULL)
 		puts(e);
 
-	if (show_usage)
-    		puts("Usage: flo [what[@at][,from][-to] || [-c id] -w what | -a at | -f from | -t to || -r id]");
+	if (print_usage)
+    		puts("Usage: flo [what[@at][,from][-to] || [-c id] -w what | -\
+a at | -f from | -t to || -r id]");
 
 	free_args(a);
 
@@ -387,14 +389,14 @@ static int read_items(struct item *items) {
 	char fn[256];
 	FILE *f;
 	int n;
-	char line[1024];
+	char line[LINE_LENGTH];
 
 	get_filename(fn);
 
 	if ((f = fopen(fn, "r")) == NULL)
 		return 0;
 
-	for (n = 0; (fgets(line, 1024, f)) != NULL; n++) {
+	for (n = 0; (fgets(line, LINE_LENGTH, f)) != NULL; n++) {
 		line_to_item(&items[n], line);
 	}
 
@@ -456,7 +458,7 @@ static int list_items() {
 	int n;
 	struct item *items;
 
-	items = (struct item *)calloc(LIST_ITEMS, sizeof(struct item));
+	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
 
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
@@ -508,7 +510,7 @@ static int change_item(struct args *a) {
 	struct item *items;
 	struct item *it;
 
-	items = (struct item *)calloc(LIST_ITEMS, sizeof(struct item));
+	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
 
 	n = read_items(items);
 
@@ -555,7 +557,7 @@ static int remove_item(struct args *a) {
 	int n;
 	struct item *items;
 
-	items = (struct item *)calloc(LIST_ITEMS, sizeof(struct item));
+	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
 
 	n = read_items(items);
 
