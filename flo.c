@@ -41,7 +41,7 @@ static int last_index_of(const char *s, const char c) {
 	return -1;
 }
 
-static int read_args_short(struct args *a, const int argc, char *argv[]) {
+static void read_args_short(struct args *a, const int argc, char *argv[]) {
 	int i;
 	char line[1024];
 	char *rest;
@@ -60,7 +60,7 @@ static int read_args_short(struct args *a, const int argc, char *argv[]) {
 	n = last_index_of(line, '@');
 
 	if (n != -1) {
-		a->what = (char *)malloc(n + 1);
+		a->what = (char *)calloc(n + 1, 1);
 		strncpy(a->what, line, n);
 		rest = &line[0] + n + 1;
 	}
@@ -71,7 +71,7 @@ static int read_args_short(struct args *a, const int argc, char *argv[]) {
 
 	if (n != -1) {
 		len = strlen(rest) - n - 1;
-		a->to = (char *)malloc(len);	
+		a->to = (char *)calloc(len, 1);	
 		strncpy(a->to, rest + n + 1, len);
 		rest[n] = '\0';
 	}
@@ -80,21 +80,19 @@ static int read_args_short(struct args *a, const int argc, char *argv[]) {
 
 	if (n != -1) {
 		len = strlen(rest) - n - 1;
-		a->from = (char *)malloc(len);	
+		a->from = (char *)calloc(len, 1);	
 		strncpy(a->from, rest + n + 1, len);
 		rest[n] = '\0';
 	}
 
 	if (a->what == 0) {
-		a->what = (char *)malloc(strlen(rest) + 1);
+		a->what = (char *)calloc(strlen(rest) + 1, 1);
 		strcpy(a->what, rest);	
 	}
 	else {
-		a->at = (char *)malloc(strlen(rest) + 1);
+		a->at = (char *)calloc(strlen(rest) + 1, 1);
 		strcpy(a->at, rest);	
 	}
-
-	return 1;
 }
 
 static int read_args(struct args *a, const int argc, char *argv[]) {
@@ -297,14 +295,7 @@ static void fail(struct args *a, const char *e, const int show_usage) {
 	exit(EXIT_FAILURE);
 }
 
-static int verify_args(const struct args *a) {
-	if (a->what == 0)
-		return 0;
-
-	return 1;
-}
-
-static void print_items(const struct item* items, const int n) {
+static void print_items(const struct item *items, const int n) {
 	int i;
 	struct item *it;
 	struct tm *tm;
@@ -493,7 +484,7 @@ static int add_item(struct args *a) {
 	time_t from = 0;
 	time_t to = 0;
 
-	if (verify_args(a) == 0)
+	if (a->what == 0)
 		fail(a, NULL, 1);
 
 	if (a->from != 0)
@@ -594,8 +585,7 @@ int main(int argc, char *argv[]) {
 		memset(&a, 0, sizeof(struct args));
 
 		if (argv[1][0] != '-') {
-			if (read_args_short(&a, argc, argv) == 0)
-				fail(&a, NULL, 1);
+			read_args_short(&a, argc, argv);
 
 			return add_item(&a);
 		}
