@@ -50,7 +50,7 @@ static int write_item_to_stream(
 	time_t from,
 	time_t to);
 static void line_to_item(struct item *it, char *line);
-static int parse_date(time_t *t, const char *s);
+static int parse_datestr(time_t *t, const char *s);
 static int complete_datestr(char *s1, const char *s2);
 static int datestr_to_time(time_t *t, const char *s);
 static void inc_month(struct tm *tm, const char *s);
@@ -210,11 +210,11 @@ static int add_item(struct args *a) {
 		fail(a, NULL, 1);
 
 	if (a->from != 0)
-		if (parse_date(&from, a->from) == 0)
+		if (parse_datestr(&from, a->from) == 0)
 			fail(a, "Could not parse from-date.", 1);
 
 	if (a->to != 0)
-		if (parse_date(&to, a->to) == 0)
+		if (parse_datestr(&to, a->to) == 0)
 			fail(a, "Could not parse to-date.", 1);
 
 	if (write_item(a, from, to) == 0)
@@ -258,11 +258,11 @@ static int change_item(struct args *a) {
 	}
 
 	if (a->from != 0)
-		if (parse_date(&it->from, a->from) == 0)
+		if (parse_datestr(&it->from, a->from) == 0)
 			fail(a, "Could not parse from-date.", 1);
 
 	if (a->to != 0)
-		if (parse_date(&it->to, a->to) == 0)
+		if (parse_datestr(&it->to, a->to) == 0)
 			fail(a, "Could not parse to-date.", 1);
 
 	write_items(items, n, -1);
@@ -501,7 +501,7 @@ static void line_to_item(struct item *it, char *line) {
 	}
 }
 
-static int parse_date(time_t *t, const char *s) {
+static int parse_datestr(time_t *t, const char *s) {
 	char s2[15];
 	memset(s2, 0, sizeof(s2));
 
