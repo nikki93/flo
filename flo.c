@@ -1,92 +1,6 @@
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#include "flo.h"
 
-#define LINE_LENGTH 1024
-#define ITEM_COUNT 128
-#define DATE_FORMAT "%Y-%m-%d %H:%M"
-#define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
-#define IS_TODO(it) (it->from == 0 && it->to == 0)
-#define IS_EVENT(it) (!IS_TODO(it) && !IS_DEADLINE(it))
-
-struct args {
-	char *what;
-	char *at;
-	char *from;
-	char *to;
-	int change;
-	int remove;
-	int id;
-};
-
-struct item {
-	char *what;
-	char *at;
-	time_t from;
-	time_t to;
-};
-
-int main(int argc, char *argv[]);
-static int read_args(struct args *a, const int argc, char *argv[]);
-static void read_args_short(struct args *a, const int argc, char *argv[]);
-static void free_args(struct args *a);
-static int list_items();
-static int add_item(struct args *a);
-static int change_item(struct args *a);
-static int remove_item(struct args *a);
-static int read_items(struct item *items);
-static int write_items(const struct item *items, const int n, int except);
-static int write_item(struct args *a, const time_t from, const time_t to);
-static void print_items(const struct item *items, const int n);
-static int sort_items(const void *a, const void *b);
-static void free_items(struct item *items, const int n);
-static int write_item_to_stream(
-	FILE *f,
-	const char *what,
-	const char* at,
-	time_t from,
-	time_t to);
-static void line_to_item(struct item *it, char *line);
-static int parse_datestr(time_t *t, const char *s);
-static int complete_datestr(char *s1, const char *s2);
-static int datestr_to_time(time_t *t, const char *s);
-static void inc_month(struct tm *tm, const char *s);
-static void set_year_and_month(char *year, char *month, const struct tm *tm);
-static int last_index_of(const char *s, const char c);
-static void get_filename(char *s);
-static void fail(struct args *a, const char *e, const int print_usage);
-
-int main(int argc, char *argv[]) {
-	struct args a;
-
-	if (argc < 2)
-		return list_items();
-	else {
-		memset(&a, 0, sizeof(struct args));
-
-		if (argv[1][0] != '-') {
-			read_args_short(&a, argc, argv);
-
-			return add_item(&a);
-		}
-		else {
-			if (read_args(&a, argc, argv) == 0)
-				fail(&a, NULL, 1);
-
-			if (a.change != 0)
-				return change_item(&a);
-			else if (a.remove != 0)
-				return remove_item(&a);
-			else
-				return add_item(&a);
-		}
-	}
-}
-
-static int read_args(struct args *a, const int argc, char *argv[]) {
+int read_args(struct args *a, const int argc, char *argv[]) {
 	char c;
 
 	while ((c = getopt(argc, argv, "c:r:w:a:f:t:")) != -1) {
@@ -126,7 +40,7 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 /*
 	Parses a short version of the input string.
 */
-static void read_args_short(struct args *a, const int argc, char *argv[]) {
+void read_args_short(struct args *a, const int argc, char *argv[]) {
 	int i;
 	char line[LINE_LENGTH];
 	char *rest;
@@ -180,14 +94,14 @@ static void read_args_short(struct args *a, const int argc, char *argv[]) {
 	}
 }
 
-static void free_args(struct args *a) {
+void free_args(struct args *a) {
 	free(a->what);
 	free(a->at);
 	free(a->from);
 	free(a->to);
 }
 
-static int list_items() {
+int list_items() {
 	int n;
 	struct item *items;
 
@@ -202,7 +116,7 @@ static int list_items() {
 	return EXIT_SUCCESS;
 }
 
-static int add_item(struct args *a) {
+int add_item(struct args *a) {
 	time_t from = 0;
 	time_t to = 0;
 
@@ -225,7 +139,7 @@ static int add_item(struct args *a) {
 	return list_items();
 }
 
-static int change_item(struct args *a) {
+int change_item(struct args *a) {
 	int n;
 	struct item *items;
 	struct item *it;
@@ -273,7 +187,7 @@ static int change_item(struct args *a) {
 	return list_items();
 }
 
-static int remove_item(struct args *a) {
+int remove_item(struct args *a) {
 	int n;
 	struct item *items;
 
@@ -298,7 +212,7 @@ static int remove_item(struct args *a) {
 	return list_items();
 }
 
-static int read_items(struct item *items) {
+int read_items(struct item *items) {
 	char fn[256];
 	FILE *f;
 	int n;
@@ -318,7 +232,7 @@ static int read_items(struct item *items) {
 	return n;
 }
 
-static int write_items(const struct item *items, const int n, int except) {
+int write_items(const struct item *items, const int n, int except) {
 	char fn[256];
 	FILE *f;
 	int i;
@@ -345,7 +259,7 @@ static int write_items(const struct item *items, const int n, int except) {
 	return 1;
 }
 
-static int write_item(struct args *a, const time_t from, const time_t to) {
+int write_item(struct args *a, const time_t from, const time_t to) {
 	char fn[256];
 	FILE *f;
 
@@ -361,7 +275,7 @@ static int write_item(struct args *a, const time_t from, const time_t to) {
 	return 1;
 }
 
-static void print_items(const struct item *items, const int n) {
+void print_items(const struct item *items, const int n) {
 	int i;
 	struct item *it;
 	struct tm *tm;
@@ -407,7 +321,7 @@ static void print_items(const struct item *items, const int n) {
 	}
 }
 
-static int sort_items(const void *a, const void *b) {
+int sort_items(const void *a, const void *b) {
 	struct item *ia = (struct item *)a;
 	struct item *ib = (struct item *)b;
 
@@ -429,7 +343,7 @@ static int sort_items(const void *a, const void *b) {
 	return 0;
 }
 
-static void free_items(struct item *items, const int n) {
+void free_items(struct item *items, const int n) {
 	int i;
 
 	for (i = 0; i < n; i++) {
@@ -440,7 +354,7 @@ static void free_items(struct item *items, const int n) {
 	free(items);
 }
 
-static int write_item_to_stream(
+int write_item_to_stream(
 	FILE *f,
 	const char *what,
 	const char* at,
@@ -470,7 +384,7 @@ static int write_item_to_stream(
 	return 1;
 }
 
-static void line_to_item(struct item *it, char *line) {
+void line_to_item(struct item *it, char *line) {
 	int col;
 	char *token = NULL;
 	char *delims = "\t";
@@ -501,7 +415,7 @@ static void line_to_item(struct item *it, char *line) {
 	}
 }
 
-static int parse_datestr(time_t *t, const char *s) {
+int parse_datestr(time_t *t, const char *s) {
 	char s2[15];
 	memset(s2, 0, sizeof(s2));
 
@@ -518,7 +432,7 @@ static int parse_datestr(time_t *t, const char *s) {
 	Add the current year or year and month to date string if the date
 	specified is in a short format.
 */
-static int complete_datestr(char *s1, const char *s2) {
+int complete_datestr(char *s1, const char *s2) {
 	time_t t;
 	struct tm *tm;
 	char year[5];
@@ -561,7 +475,7 @@ static int complete_datestr(char *s1, const char *s2) {
 	return 1;
 }
 
-static int datestr_to_time(time_t *t, const char *s) {
+int datestr_to_time(time_t *t, const char *s) {
 	struct tm tm;
 
 	memset(&tm, 0, sizeof(struct tm));
@@ -580,7 +494,7 @@ static int datestr_to_time(time_t *t, const char *s) {
 	For a short date format, if the user has typed in a day of the month
 	that is before today, increase the month.
 */
-static void inc_month(struct tm *tm, const char *s) {
+void inc_month(struct tm *tm, const char *s) {
 	int day;
 	char day_tmp[3];
 
@@ -603,12 +517,12 @@ static void inc_month(struct tm *tm, const char *s) {
 	}
 }
 
-static void set_year_and_month(char *year, char *month, const struct tm *tm) {
+void set_year_and_month(char *year, char *month, const struct tm *tm) {
 	sprintf(year, "%d", 1900 + tm->tm_year);
 	sprintf(month, "%02d", tm->tm_mon + 1);
 }
 
-static int last_index_of(const char *s, const char c) {
+int last_index_of(const char *s, const char c) {
 	int i;
 
 	for (i = strlen(s) - 1; i >= 0; i--) {
@@ -619,11 +533,11 @@ static int last_index_of(const char *s, const char c) {
 	return -1;
 }
 
-static void get_filename(char *s) {
+void get_filename(char *s) {
 	sprintf(s, "%s/.flo", getenv("HOME"));
 }
 
-static void fail(struct args *a, const char *e, const int print_usage) {
+void fail(struct args *a, const char *e, const int print_usage) {
 	if (e != NULL)
 		puts(e);
 
