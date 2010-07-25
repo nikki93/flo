@@ -295,7 +295,7 @@ void print_items(const struct item *items, const int n) {
 			printf("\n");
 		}
 		else if (IS_TODO(it)) {
-			printf("% 4d  %s", i, it->what);
+			printf("t% 3d  %s", i, it->what);
 
 			if (it->at != 0)
 				printf("@%s", it->at);
