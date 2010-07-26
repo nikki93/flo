@@ -325,22 +325,28 @@ int sort_items(const void *a, const void *b) {
 	struct item *ia = (struct item *)a;
 	struct item *ib = (struct item *)b;
 
-	if (IS_EVENT(ia) && !IS_EVENT(ib))
-		return -1;
-	else if (IS_DEADLINE(ia) && !IS_DEADLINE(ib)) {
+	if (IS_TODO(ia)) {
+		if (IS_TODO(ib))
+			return 0;
+		else
+			return 1;
+	}
+	else if (IS_DEADLINE(ia)) {
 		if (IS_TODO(ib))
 			return -1;
+		else if (IS_DEADLINE(ib))
+			return ia->to > ib->to;
 		else
 			return ia->to > ib->from;
 	}
-	else if (IS_DEADLINE(ia) && IS_DEADLINE(ib))
-		return ia->to > ib->to;
-	else if (IS_TODO(ia) && !IS_TODO(ib))
-		return 1;
-	else
-		return ia->from > ib->from;
-
-	return 0;
+	else {
+		if (IS_TODO(ib))
+			return -1;
+		else if (IS_DEADLINE(ib))
+			return ia->from > ib->to;
+		else
+			return ia->from > ib->from;
+	}
 }
 
 void free_items(struct item *items, const int n) {

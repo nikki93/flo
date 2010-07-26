@@ -1,5 +1,5 @@
 CC=cc
-CFLAGS=-ansi -pedantic -Wall -Wextra -Werror -O2
+CFLAGS=-ansi -pedantic -Wall -Wextra -O2
 
 flo: flo.o
 	${CC} ${CFLAGS} -o flo main.c flo.o
