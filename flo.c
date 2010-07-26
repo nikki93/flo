@@ -372,12 +372,12 @@ int write_item_to_stream(
 	fprintf(f, "\t");
 
 	if (from != 0)
-		fprintf(f, "%ld", (long int)from);
+		fprintf(f, "%ld", from);
 
 	fprintf(f, "\t");
 
 	if (to != 0)
-		fprintf(f, "%ld", (long int)to);
+		fprintf(f, "%ld", to);
 
 	fprintf(f, "\n");
 
