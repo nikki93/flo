@@ -38,6 +38,7 @@ int remove_item(struct args *a);
 int read_items(struct item *items);
 int write_items(const struct item *items, const int n, int except);
 int write_item(struct args *a, const time_t from, const time_t to);
+void format_date(char *s, size_t len, const time_t t);
 void print_items(const struct item *items, const int n);
 int sort_items(const void *a, const void *b);
 void free_items(struct item *items, const int n);

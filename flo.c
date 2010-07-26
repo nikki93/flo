@@ -275,26 +275,36 @@ int write_item(struct args *a, const time_t from, const time_t to) {
 	return 1;
 }
 
+void format_date(char *s, size_t len, const time_t t) {
+	struct tm *tm, tm_it, tm_now;
+	time_t t_now;
+
+	tm = localtime(&t);
+	memcpy(&tm_it, tm, sizeof(struct tm));
+
+	t_now = time(NULL);
+	tm = localtime(&t_now);
+	memcpy(&tm_now, tm, sizeof(struct tm));
+
+	if ((tm_it.tm_year == tm_now.tm_year &&
+		tm_it.tm_mon == tm_now.tm_mon) &&
+		tm_it.tm_mday == tm_now.tm_mday)
+
+		strftime(s, len, "     today %H:%M", &tm_it);
+	else
+		strftime(s, len, DATE_FORMAT, &tm_it);
+}
+
 void print_items(const struct item *items, const int n) {
 	int i;
 	struct item *it;
-	struct tm *tm;
 	char s[17];
+	time_t t_now;
 
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
 
-		if (IS_DEADLINE(it)) {
-			tm = localtime(&it->to);
-			strftime(s, sizeof(s), DATE_FORMAT, tm);
-			printf("d% 3d  %s  %s", i, s, it->what);
-
-			if (it->at != 0)
-				printf("@%s", it->at);
-
-			printf("\n");
-		}
-		else if (IS_TODO(it)) {
+		if (IS_TODO(it)) {
 			printf("t% 3d  %s", i, it->what);
 
 			if (it->at != 0)
@@ -302,9 +312,17 @@ void print_items(const struct item *items, const int n) {
 
 			printf("\n");
 		}
+		else if (IS_DEADLINE(it)) {
+			format_date(s, sizeof(s), it->to);
+			printf("d% 3d  %s  %s", i, s, it->what);
+
+			if (it->at != 0)
+				printf("@%s", it->at);
+
+			printf("\n");
+		}
 		else {
-			tm = localtime(&it->from);
-			strftime(s, sizeof(s), DATE_FORMAT, tm);
+			format_date(s, sizeof(s), it->from);
 			printf("% 4d  %s  %s", i, s, it->what);
 
 			if (it->at != 0)
@@ -313,8 +331,7 @@ void print_items(const struct item *items, const int n) {
 			printf("\n");
 
 			if (it->to != 0) {
-				tm = localtime(&it->to);
-				strftime(s, sizeof(s), DATE_FORMAT, tm);
+				format_date(s, sizeof(s), it->to);
 				printf("      %s\n", s);
 			}
 		}
