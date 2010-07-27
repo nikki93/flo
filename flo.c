@@ -275,31 +275,42 @@ int write_item(struct args *a, const time_t from, const time_t to) {
 	return 1;
 }
 
-void format_date(char *s, size_t len, const time_t t) {
-	struct tm *tm, tm_it, tm_now;
+int is_same_day(const struct tm *tm1, const struct tm *tm2) {
+	return ((tm1->tm_year == tm2->tm_year && tm1->tm_mon == tm2->tm_mon) &&
+		tm1->tm_mday == tm2->tm_mday);
+}
+
+void format_date(char *s, size_t len, const time_t t1, const time_t t2) {
+	struct tm *tm, tm_it1, tm_it2, tm_now;
 	time_t t_now;
 
-	tm = localtime(&t);
-	memcpy(&tm_it, tm, sizeof(struct tm));
+	tm = localtime(&t1);
+	memcpy(&tm_it1, tm, sizeof(struct tm));
 
 	t_now = time(NULL);
 	tm = localtime(&t_now);
 	memcpy(&tm_now, tm, sizeof(struct tm));
 
-	if ((tm_it.tm_year == tm_now.tm_year &&
-		tm_it.tm_mon == tm_now.tm_mon) &&
-		tm_it.tm_mday == tm_now.tm_mday)
+	if (t2 != 0) {
+		tm = localtime(&t2);
+		memcpy(&tm_it2, tm, sizeof(struct tm));
 
-		strftime(s, len, "     today %H:%M", &tm_it);
+		if (is_same_day(&tm_it2, &tm_it1)) {
+			strftime(s, len, "           %H:%M", &tm_it1);
+			return;
+		}
+	}
+
+	if (is_same_day(&tm_it1, &tm_now))
+		strftime(s, len, "     today %H:%M", &tm_it1);
 	else
-		strftime(s, len, DATE_FORMAT, &tm_it);
+		strftime(s, len, DATE_FORMAT, &tm_it1);
 }
 
 void print_items(const struct item *items, const int n) {
 	int i;
 	struct item *it;
 	char s[17];
-	time_t t_now;
 
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
@@ -313,7 +324,7 @@ void print_items(const struct item *items, const int n) {
 			printf("\n");
 		}
 		else if (IS_DEADLINE(it)) {
-			format_date(s, sizeof(s), it->to);
+			format_date(s, sizeof(s), it->to, 0);
 			printf("d% 3d  %s  %s", i, s, it->what);
 
 			if (it->at != 0)
@@ -322,7 +333,7 @@ void print_items(const struct item *items, const int n) {
 			printf("\n");
 		}
 		else {
-			format_date(s, sizeof(s), it->from);
+			format_date(s, sizeof(s), it->from, 0);
 			printf("% 4d  %s  %s", i, s, it->what);
 
 			if (it->at != 0)
@@ -331,7 +342,7 @@ void print_items(const struct item *items, const int n) {
 			printf("\n");
 
 			if (it->to != 0) {
-				format_date(s, sizeof(s), it->to);
+				format_date(s, sizeof(s), it->to, it->from);
 				printf("      %s\n", s);
 			}
 		}
