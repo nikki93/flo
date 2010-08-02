@@ -535,7 +535,7 @@ void inc_month(struct tm *tm, const char *s) {
 	memset(day_tmp, 0, sizeof(day_tmp));
 
 	if (s[0] == '0')
-		memcpy(day_tmp, s, 1);
+		day_tmp[0] = s[1];
 	else
 		memcpy(day_tmp, s, 2);
 
