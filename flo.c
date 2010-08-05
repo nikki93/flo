@@ -217,7 +217,7 @@ int remove_item(struct args *a) {
 
 	n = read_items(items);
 
-	if (n == 0 || (a->id < 0 || a->id > n)) {
+	if (n == 0 || (a->id < 0 || a->id >= n)) {
 		free_items(items, n);
 		fail(a, "Could not find item.", 0);
 
