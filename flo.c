@@ -64,8 +64,14 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 			strncpy(a->tag, &line[0] + 1, n - 1);
 			rest = &line[0] + n + 1;
 		}
-		else
+		else if (strlen(line) > 1) {
+			a->tag = calloc(strlen(line), 1);
+			strncpy(a->tag, &line[1], strlen(line) - 1);
+			return 2;
+		}
+		else {
 			return 0;
+		}
 	}
 
 	n = last_index_of(rest, '-');
@@ -99,7 +105,7 @@ void free_args(struct args *a) {
 	free(a->to);
 }
 
-int list_items() {
+int list_items(struct args *a) {
 	struct item *items;
 	size_t n;
 
@@ -107,7 +113,14 @@ int list_items() {
 
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
-	print_items(items, n);
+
+	if (a != NULL) {
+		print_items(items, n, a->tag);
+		free_args(a);
+	}
+	else {
+		print_items(items, n, NULL);
+	}
 
 	free_items(items, n);
 
@@ -134,7 +147,7 @@ int add_item(struct args *a) {
 
 	free_args(a);
 
-	return list_items();
+	return list_items(NULL);
 }
 
 int change_item(struct args *a) {
@@ -193,7 +206,7 @@ int change_item(struct args *a) {
 	free_args(a);
 	free_items(items, n);
 
-	return list_items();
+	return list_items(NULL);
 }
 
 int remove_item(struct args *a) {
@@ -218,7 +231,7 @@ int remove_item(struct args *a) {
 	free_args(a);
 	free_items(items, n);
 
-	return list_items();
+	return list_items(NULL);
 }
 
 int read_items(struct item *items) {
@@ -316,7 +329,7 @@ void format_date(char *s, const size_t len, const time_t t1, const time_t t2) {
 		strftime(s, len, DATE_FORMAT, &tm_t1);
 }
 
-void print_items(const struct item *items, const int n) {
+void print_items(const struct item *items, const int n, const char *tag) {
 	int i;
 	struct item *it;
 	char s[17];
@@ -324,10 +337,18 @@ void print_items(const struct item *items, const int n) {
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
 
+		if (tag != NULL) {
+			if (it->tag == 0)
+				continue;
+
+			if (strcmp(tag, it->tag) != 0)
+				continue;
+		}
+
 		if (IS_TODO(it)) {
 			printf("t% 3d  ", i);
 
-			if (it->tag != 0)
+			if (it->tag != 0 && tag == NULL)
 				printf("@%s ", it->tag);
 
 			printf("%s\n", it->what);
@@ -336,7 +357,7 @@ void print_items(const struct item *items, const int n) {
 			format_date(s, sizeof(s), it->to, 0);
 			printf("d% 3d  %s  ", i, s);
 
-			if (it->tag != 0)
+			if (it->tag != 0 && tag == NULL)
 				printf("@%s ", it->tag);
 
 			printf("%s\n", it->what);
@@ -345,7 +366,7 @@ void print_items(const struct item *items, const int n) {
 			format_date(s, sizeof(s), it->from, 0);
 			printf("% 4d  %s  ", i, s);
 
-			if (it->tag != 0)
+			if (it->tag != 0 && tag == NULL)
 				printf("@%s ", it->tag);
 
 			printf("%s\n", it->what);
@@ -596,8 +617,8 @@ void fail(struct args *a, const char *e, const int print_usage) {
 		puts(e);
 
 	if (print_usage)
-    		puts("Usage: flo [[@tag ]what[,from][-to] || [-c id] [-T tag] -\
-w what [-f from | -t to] || -r id]");
+    		puts("Usage: flo [@tag |what[,from][-to] || [-c id] [-T tag] -w\
+ what [-f from | -t to] || -r id]");
 
 	free_args(a);
 

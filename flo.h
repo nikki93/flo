@@ -31,7 +31,7 @@ struct item {
 int read_args(struct args *a, const int argc, char *argv[]);
 int read_args_short(struct args *a, const int argc, char *argv[]);
 void free_args(struct args *a);
-int list_items();
+int list_items(struct args *a);
 int add_item(struct args *a);
 int change_item(struct args *a);
 int remove_item(struct args *a);
@@ -40,7 +40,7 @@ int write_items(const struct item *items, const int n, int except);
 int write_item(struct args *a, const time_t from, const time_t to);
 int is_same_day(const struct tm *tm1, const struct tm *tm2);
 void format_date(char *s, const size_t len, const time_t t1, const time_t t2);
-void print_items(const struct item *items, const int n);
+void print_items(const struct item *items, const int n, const char *tag);
 int sort_items(const void *a, const void *b);
 void free_items(struct item *items, const int n);
 int write_item_to_stream(

@@ -24,51 +24,57 @@ Optionally set up `f` as an alias to `flo`.
     d  0  2010-10-01 12:00  deliver assignment
     t  1  clean apartment
 
-### add event
+### add tagged event
 
-    $ f eat lunch,051200-051245
-       0       today 12:00  eat lunch
-                     12:45
+    $ f @work eat lunch,061100-061130
+       0       today 11:00  @work eat lunch
+                     11:30
     d  1  2010-10-01 12:00  deliver assignment
     t  2  clean apartment
 
-### add tagged event
+### add event
 
-    $ f @home watch movie,051900
-       0       today 12:00  eat lunch
-                     12:45
-       1       today 19:00  @home watch movie
+    $ f watch movie,061900
+       0       today 11:00  @work eat lunch
+                     11:30
+       1       today 19:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
     t  3  clean apartment
 
 ### change the time of the event
 
-    $ f -c 1 -f 052000
-       0       today 12:00  eat lunch
-                     12:45
-       1       today 20:00  @home watch movie
+    $ f -c 1 -f 062000
+       0       today 11:00  @work eat lunch
+                     11:30
+       1       today 20:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
     t  3  clean apartment
 
 ### remove todo
 
     $ f -r 3
-       0       today 12:00  eat lunch
-                     12:45
-       1       today 20:00  @home watch movie
+       0       today 11:00  @work eat lunch
+                     11:30
+       1       today 20:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
 
 ### change deadline into todo
 
     $ f -c 2 -t r
-       0       today 12:00  eat lunch
-                     12:45
-       1       today 20:00  @home watch movie
+       0       today 11:00  @work eat lunch
+                     11:30
+       1       today 20:00  watch movie
     t  2  deliver assignment
+
+### show items tagged with “work”
+
+    $ f @work
+       0       today 11:00  eat lunch
+                     11:30
 
 ## usage
 
-    flo [[@tag ]what[,from][-to] || [-c id] [-T tag] -w what [-f from | -t to] || -r id]
+    flo [@tag |what[,from][-to] || [-c id] [-T tag] -w what [-f from | -t to] || -r id]
 
 ### date formats
 
