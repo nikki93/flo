@@ -7,49 +7,64 @@ flo is a command line application that keeps you in check. It’s small and fast
     make
     cp flo /usr/local/bin/
 
+Optionally set up `f` as an alias to `flo`.
+
+    echo "alias f='flo'" >> ~/.bashrc
+
 ## getting started
 
 ### add todo
 
-     $ flo clean apartment
-     t  0  clean apartment
-
-### add event
-
-     $ flo eat lunch@some cafe,221200-221245
-        0       today 12:00  eat lunch@some cafe
-                      12:45
-     t  1  clean apartment
+    $ f clean apartment
+    t  0  clean apartment
 
 ### add deadline
 
-     $ flo a deadline@uni-10011200
-        0       today 12:00  eat lunch@some cafe
-                      12:45
-     d  1  2010-10-01 12:00  deliver assignment
-     t  2  clean apartment
+    $ f deliver assignment@uni-10011200
+    d  0  2010-10-01 12:00  deliver assignment@uni
+    t  1  clean apartment
 
-### change the time of the lunch
+### add event
 
-     $ flo -c 0 -f 221300 -t 221345
-        0       today 13:00  eat lunch@some cafe
-                      13:45
-     d  1  2010-10-01 12:00  deliver assignment
-     t  2  clean apartment
+    $ f eat lunch@some cafe,051200-051245
+       0       today 12:00  eat lunch@some cafe
+                     12:45
+    d  1  2010-10-01 12:00  deliver assignment@uni
+    t  2  clean apartment
+
+### add another event
+
+    $ f watch movie,051900
+       0       today 12:00  eat lunch@some cafe
+                     12:45
+       1       today 19:00  watch movie
+    d  2  2010-10-01 12:00  deliver assignment@uni
+    t  3  clean apartment
+
+### change the time of the event
+
+    $ f -c 1 -f 052000
+       0       today 12:00  eat lunch@some cafe
+                     12:45
+       1       today 20:00  watch movie
+    d  2  2010-10-01 12:00  deliver assignment@uni
+    t  3  clean apartment
 
 ### remove todo
 
-     $ flo -r 2
-        0       today 13:00  eat lunch@some cafe
-                      13:45
-     d  1  2010-10-01 12:00  deliver assignment
+    $ f -r 3
+       0       today 12:00  eat lunch@some cafe
+                     12:45
+       1       today 20:00  watch movie
+    d  2  2010-10-01 12:00  deliver assignment@uni
 
-### change the deadline into a todo
+### change deadline into todo
 
-    $ flo -c 1 -t r
-        0       today 13:00  eat lunch@some cafe
-                      13:45
-        1  deliver assignment
+    $ f -c 2 -t r
+       0       today 12:00  eat lunch@some cafe
+                     12:45
+       1       today 20:00  watch movie
+    t  2  deliver assignment@uni
 
 ## usage
 
@@ -70,6 +85,23 @@ month is set to the next month.
 The value for hours and minutes is set to `00` if no other value is specified.
 
 When changing an existing item, setting a date to `r` removes the date.
+
+## aliases
+
+    # all todos
+    alias ft='flo | grep ^t' 
+
+    # all deadlines
+    alias fd='flo | grep ^d' 
+
+    # all events
+    alias fe='flo | grep ^[^td]' 
+
+    # today’s events and deadlines
+    alias f0='flo | grep today' 
+
+    # today’s events and deadlines, all todos
+    alias f0t='flo | grep -E "today|^t"' 
 
 ## license
 
