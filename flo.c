@@ -172,12 +172,23 @@ int change_item(struct args *a) {
 	}
 
 	if (a->from != 0)
-		if (parse_datestr(&it->from, a->from) == 0)
-			fail(a, "Could not parse from-date.", 1);
+	{
+		if (strcmp(a->from, "r") == 0) {
+			it->from = 0;
+		}
+		else
+			if (parse_datestr(&it->from, a->from) == 0)
+				fail(a, "Could not parse from-date.", 1);
+	}
 
 	if (a->to != 0)
-		if (parse_datestr(&it->to, a->to) == 0)
-			fail(a, "Could not parse to-date.", 1);
+	{
+		if (strcmp(a->to, "r") == 0)
+			it->to = 0;
+		else
+			if (parse_datestr(&it->to, a->to) == 0)
+				fail(a, "Could not parse to-date.", 1);
+	}
 
 	write_items(items, n, -1);
 	

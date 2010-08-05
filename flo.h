@@ -5,11 +5,11 @@
 #include <time.h>
 #include <unistd.h>
 
-#define LINE_LENGTH 1024
-#define ITEM_COUNT 128
 #define DATE_FORMAT "%Y-%m-%d %H:%M"
-#define IS_TODO(it) (it->from == 0 && it->to == 0)
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
+#define IS_TODO(it) (it->from == 0 && it->to == 0)
+#define ITEM_COUNT 128
+#define LINE_LENGTH 1024
 
 struct args {
 	char *what;
