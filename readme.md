@@ -41,7 +41,7 @@ Optionally set up `f` as an alias to `flo`.
     d  2  2010-10-01 12:00  deliver assignment
     t  3  clean apartment
 
-### change the time of the event
+### change time of an event
 
     $ f -c 1 -f 062000
        0       today 11:00  @work eat lunch
@@ -66,7 +66,7 @@ Optionally set up `f` as an alias to `flo`.
        1       today 20:00  watch movie
     t  2  deliver assignment
 
-### show items tagged with “work”
+### show items tagged “work”
 
     $ f @work
        0       today 11:00  eat lunch
