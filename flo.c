@@ -45,7 +45,7 @@ void read_args_short(struct args *a, const int argc, char *argv[]) {
 	char line[LINE_LENGTH];
 	char *rest;
 	int n;
-	int len;
+	size_t len;
 
 	memset(line, 0, sizeof(line));
 
@@ -102,8 +102,8 @@ void free_args(struct args *a) {
 }
 
 int list_items() {
-	int n;
 	struct item *items;
+	size_t n;
 
 	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
 
@@ -280,12 +280,12 @@ int is_same_day(const struct tm *tm1, const struct tm *tm2) {
 		tm1->tm_mday == tm2->tm_mday);
 }
 
-void format_date(char *s, size_t len, const time_t t1, const time_t t2) {
-	struct tm *tm, tm_it1, tm_it2, tm_now;
+void format_date(char *s, const size_t len, const time_t t1, const time_t t2) {
+	struct tm *tm, tm_t1, tm_t2, tm_now;
 	time_t t_now;
 
 	tm = localtime(&t1);
-	memcpy(&tm_it1, tm, sizeof(struct tm));
+	memcpy(&tm_t1, tm, sizeof(struct tm));
 
 	t_now = time(NULL);
 	tm = localtime(&t_now);
@@ -293,18 +293,18 @@ void format_date(char *s, size_t len, const time_t t1, const time_t t2) {
 
 	if (t2 != 0) {
 		tm = localtime(&t2);
-		memcpy(&tm_it2, tm, sizeof(struct tm));
+		memcpy(&tm_t2, tm, sizeof(struct tm));
 
-		if (is_same_day(&tm_it2, &tm_it1)) {
-			strftime(s, len, "           %H:%M", &tm_it1);
+		if (is_same_day(&tm_t2, &tm_t1)) {
+			strftime(s, len, "           %H:%M", &tm_t1);
 			return;
 		}
 	}
 
-	if (is_same_day(&tm_it1, &tm_now))
-		strftime(s, len, "     today %H:%M", &tm_it1);
+	if (is_same_day(&tm_t1, &tm_now))
+		strftime(s, len, "     today %H:%M", &tm_t1);
 	else
-		strftime(s, len, DATE_FORMAT, &tm_it1);
+		strftime(s, len, DATE_FORMAT, &tm_t1);
 }
 
 void print_items(const struct item *items, const int n) {
