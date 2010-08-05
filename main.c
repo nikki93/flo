@@ -9,7 +9,8 @@ int main(int argc, char *argv[]) {
 		memset(&a, 0, sizeof(struct args));
 
 		if (argv[1][0] != '-') {
-			read_args_short(&a, argc, argv);
+			if (read_args_short(&a, argc, argv) == 0)
+				fail(&a, "Could not find end of tag.", 1);
 
 			return add_item(&a);
 		}

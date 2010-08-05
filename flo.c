@@ -3,7 +3,7 @@
 int read_args(struct args *a, const int argc, char *argv[]) {
 	char c;
 
-	while ((c = getopt(argc, argv, "c:r:w:a:f:t:")) != -1) {
+	while ((c = getopt(argc, argv, "c:r:T:w:f:t:")) != -1) {
 		switch (c) {
 			case 'c':
 				a->change = 1;
@@ -13,13 +13,13 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 				a->remove = 1;
 				a->id = atoi(optarg);
 				break;
+			case 'T':
+				a->tag = malloc(strlen(optarg) + 1);
+				strcpy(a->tag, optarg);
+				break;
 			case 'w':
 				a->what = malloc(strlen(optarg) + 1);
 				strcpy(a->what, optarg);
-				break;
-			case 'a':
-				a->at = malloc(strlen(optarg) + 1);
-				strcpy(a->at, optarg);
 				break;
 			case 'f':
 				a->from = malloc(strlen(optarg) + 1);
@@ -40,10 +40,10 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 /*
 	Parses a short version of the input string.
 */
-void read_args_short(struct args *a, const int argc, char *argv[]) {
+int read_args_short(struct args *a, const int argc, char *argv[]) {
 	int i;
 	char line[LINE_LENGTH];
-	char *rest;
+	char *rest = &line[0];
 	int n;
 	size_t len;
 
@@ -56,21 +56,23 @@ void read_args_short(struct args *a, const int argc, char *argv[]) {
 			strcat(line, " ");
 	}
 
-	n = last_index_of(line, '@');
+	if (line[0] == '@') {
+		n = first_index_of(line, ' ');
 
-	if (n != -1) {
-		a->what = (char *)calloc(n + 1, 1);
-		strncpy(a->what, line, n);
-		rest = &line[0] + n + 1;
+		if (n != -1) {
+			a->tag = calloc(n, 1);
+			strncpy(a->tag, &line[0] + 1, n - 1);
+			rest = &line[0] + n + 1;
+		}
+		else
+			return 0;
 	}
-	else
-		rest = &line[0];
 
 	n = last_index_of(rest, '-');
 
 	if (n != -1) {
 		len = strlen(rest) - n - 1;
-		a->to = (char *)calloc(len, 1);	
+		a->to = calloc(len + 1, 1);
 		strncpy(a->to, rest + n + 1, len);
 		rest[n] = '\0';
 	}
@@ -79,24 +81,20 @@ void read_args_short(struct args *a, const int argc, char *argv[]) {
 
 	if (n != -1) {
 		len = strlen(rest) - n - 1;
-		a->from = (char *)calloc(len, 1);	
+		a->from = calloc(len + 1, 1);
 		strncpy(a->from, rest + n + 1, len);
 		rest[n] = '\0';
 	}
 
-	if (a->what == 0) {
-		a->what = (char *)calloc(strlen(rest) + 1, 1);
-		strcpy(a->what, rest);	
-	}
-	else {
-		a->at = (char *)calloc(strlen(rest) + 1, 1);
-		strcpy(a->at, rest);	
-	}
+	a->what = calloc(strlen(rest) + 1, 1);
+	strcpy(a->what, rest);	
+
+	return 1;
 }
 
 void free_args(struct args *a) {
 	free(a->what);
-	free(a->at);
+	free(a->tag);
 	free(a->from);
 	free(a->to);
 }
@@ -165,10 +163,10 @@ int change_item(struct args *a) {
 		strcpy(it->what, a->what);
 	}
 
-	if (a->at != 0) {
-		free(it->at);
-		it->at = malloc(strlen(a->at) + 1);
-		strcpy(it->at, a->at);
+	if (a->tag != 0) {
+		free(it->tag);
+		it->tag = malloc(strlen(a->tag) + 1);
+		strcpy(it->tag, a->tag);
 	}
 
 	if (a->from != 0)
@@ -260,7 +258,7 @@ int write_items(const struct item *items, const int n, int except) {
 		write_item_to_stream(
 			f,
 			items[i].what,
-			items[i].at,
+			items[i].tag,
 			items[i].from,
 			items[i].to);
 	}
@@ -279,7 +277,7 @@ int write_item(struct args *a, const time_t from, const time_t to) {
 	if ((f = fopen(fn, "a")) == NULL)
 		return 0;
 
-	write_item_to_stream(f, a->what, a->at, from, to);
+	write_item_to_stream(f, a->what, a->tag, from, to);
 
 	fclose(f);
 
@@ -327,30 +325,30 @@ void print_items(const struct item *items, const int n) {
 		it = (struct item *)&items[i];
 
 		if (IS_TODO(it)) {
-			printf("t% 3d  %s", i, it->what);
+			printf("t% 3d  ", i);
 
-			if (it->at != 0)
-				printf("@%s", it->at);
+			if (it->tag != 0)
+				printf("@%s ", it->tag);
 
-			printf("\n");
+			printf("%s\n", it->what);
 		}
 		else if (IS_DEADLINE(it)) {
 			format_date(s, sizeof(s), it->to, 0);
-			printf("d% 3d  %s  %s", i, s, it->what);
+			printf("d% 3d  %s  ", i, s);
 
-			if (it->at != 0)
-				printf("@%s", it->at);
+			if (it->tag != 0)
+				printf("@%s ", it->tag);
 
-			printf("\n");
+			printf("%s\n", it->what);
 		}
 		else {
 			format_date(s, sizeof(s), it->from, 0);
-			printf("% 4d  %s  %s", i, s, it->what);
+			printf("% 4d  %s  ", i, s);
 
-			if (it->at != 0)
-				printf("@%s", it->at);
+			if (it->tag != 0)
+				printf("@%s ", it->tag);
 
-			printf("\n");
+			printf("%s\n", it->what);
 
 			if (it->to != 0) {
 				format_date(s, sizeof(s), it->to, it->from);
@@ -393,7 +391,7 @@ void free_items(struct item *items, const int n) {
 
 	for (i = 0; i < n; i++) {
 		free(items[i].what);
-		free(items[i].at);
+		free(items[i].tag);
 	}
 
 	free(items);
@@ -402,7 +400,7 @@ void free_items(struct item *items, const int n) {
 int write_item_to_stream(
 	FILE *f,
 	const char *what,
-	const char* at,
+	const char* tag,
 	time_t from,
 	time_t to) {
 
@@ -411,8 +409,8 @@ int write_item_to_stream(
 
 	fprintf(f, "\t");
 
-	if (at != 0)
-		fprintf(f, "%s", at);
+	if (tag != 0)
+		fprintf(f, "%s", tag);
 
 	fprintf(f, "\t");
 
@@ -445,8 +443,8 @@ void line_to_item(struct item *it, char *line) {
 				break;
 			case 1:
 				if (strlen(token) > 0) {
-					it->at = malloc(strlen(token) + 1);
-					strcpy(it->at, token);
+					it->tag = malloc(strlen(token) + 1);
+					strcpy(it->tag, token);
 				}
 
 				break;
@@ -567,6 +565,17 @@ void set_year_and_month(char *year, char *month, const struct tm *tm) {
 	sprintf(month, "%02d", tm->tm_mon + 1);
 }
 
+int first_index_of(const char *s, const char c) {
+	unsigned int i;
+
+	for (i = 0; i < strlen(s); i++) {
+		if (s[i] == c)
+			return i;
+	}
+
+	return -1;
+}
+
 int last_index_of(const char *s, const char c) {
 	int i;
 
@@ -587,8 +596,8 @@ void fail(struct args *a, const char *e, const int print_usage) {
 		puts(e);
 
 	if (print_usage)
-    		puts("Usage: flo [what[@at][,from][-to] || [-c id] -w what | -\
-a at | -f from | -t to || -r id]");
+    		puts("Usage: flo [[@tag ]what[,from][-to] || [-c id] [-T tag] -\
+w what [-f from | -t to] || -r id]");
 
 	free_args(a);
 

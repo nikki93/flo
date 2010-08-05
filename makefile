@@ -1,7 +1,7 @@
 CC=cc
 CFLAGS=-ansi -pedantic -Wall -Wextra -O2
 
-flo: flo.o
+flo: flo.c flo.o
 	${CC} ${CFLAGS} -o flo main.c flo.o
 flo.o: flo.c
 	${CC} ${CFLAGS} -c flo.c
