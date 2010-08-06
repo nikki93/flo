@@ -177,9 +177,15 @@ int change_item(struct args *a) {
 	}
 
 	if (a->tag != 0) {
-		free(it->tag);
-		it->tag = malloc(strlen(a->tag) + 1);
-		strcpy(it->tag, a->tag);
+		if (strcmp(a->tag, "r") == 0) {
+			free(it->tag);
+			it->tag = 0;
+		}
+		else {
+			free(it->tag);
+			it->tag = malloc(strlen(a->tag) + 1);
+			strcpy(it->tag, a->tag);
+		}
 	}
 
 	if (a->from != 0)
