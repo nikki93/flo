@@ -26,6 +26,8 @@ Optionally set up `f` as an alias to `flo`.
 
 ### add tagged event
 
+A tag starts with `.` and does not contain spaces.
+
     $ f .work eat lunch,061100-061130
        0       today 11:00  work: eat lunch
                      11:30
@@ -34,7 +36,9 @@ Optionally set up `f` as an alias to `flo`.
 
 ### add event
 
-    $ f watch movie,061900
+To add an event for today, `td` can be used.
+
+    $ f watch movie,td1900
        0       today 11:00  work: eat lunch
                      11:30
        1       today 19:00  watch movie
@@ -43,7 +47,7 @@ Optionally set up `f` as an alias to `flo`.
 
 ### change time of an event
 
-    $ f -c 1 -f 062000
+    $ f -c 1 -f td2000
        0       today 11:00  work: eat lunch
                      11:30
        1       today 20:00  watch movie
