@@ -56,7 +56,7 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 			strcat(line, " ");
 	}
 
-	if (line[0] == '@') {
+	if (line[0] == '#') {
 		n = first_index_of(line, ' ');
 
 		if (n != -1) {
@@ -349,7 +349,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 			printf("t% 3d  ", i);
 
 			if (it->tag != 0 && tag == NULL)
-				printf("@%s ", it->tag);
+				printf("#%s ", it->tag);
 
 			printf("%s\n", it->what);
 		}
@@ -358,7 +358,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 			printf("d% 3d  %s  ", i, s);
 
 			if (it->tag != 0 && tag == NULL)
-				printf("@%s ", it->tag);
+				printf("#%s ", it->tag);
 
 			printf("%s\n", it->what);
 		}
@@ -367,7 +367,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 			printf("% 4d  %s  ", i, s);
 
 			if (it->tag != 0 && tag == NULL)
-				printf("@%s ", it->tag);
+				printf("#%s ", it->tag);
 
 			printf("%s\n", it->what);
 
@@ -615,7 +615,7 @@ void fail(struct args *a, const char *e, const int print_usage) {
 		puts(e);
 
 	if (print_usage)
-    		puts("Usage: flo [@tag |what[,from][-to] || [-c id] [-T tag] -w\
+    		puts("Usage: flo [#tag |what[,from][-to] || [-c id] [-T tag] -w\
  what [-f from | -t to] || -r id]");
 
 	free_args(a);

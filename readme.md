@@ -26,8 +26,8 @@ Optionally set up `f` as an alias to `flo`.
 
 ### add tagged event
 
-    $ f @work eat lunch,061100-061130
-       0       today 11:00  @work eat lunch
+    $ f #work eat lunch,061100-061130
+       0       today 11:00  #work eat lunch
                      11:30
     d  1  2010-10-01 12:00  deliver assignment
     t  2  clean apartment
@@ -35,7 +35,7 @@ Optionally set up `f` as an alias to `flo`.
 ### add event
 
     $ f watch movie,061900
-       0       today 11:00  @work eat lunch
+       0       today 11:00  #work eat lunch
                      11:30
        1       today 19:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
@@ -44,7 +44,7 @@ Optionally set up `f` as an alias to `flo`.
 ### change time of an event
 
     $ f -c 1 -f 062000
-       0       today 11:00  @work eat lunch
+       0       today 11:00  #work eat lunch
                      11:30
        1       today 20:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
@@ -53,7 +53,7 @@ Optionally set up `f` as an alias to `flo`.
 ### remove todo
 
     $ f -r 3
-       0       today 11:00  @work eat lunch
+       0       today 11:00  #work eat lunch
                      11:30
        1       today 20:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
@@ -61,20 +61,20 @@ Optionally set up `f` as an alias to `flo`.
 ### change deadline into todo
 
     $ f -c 2 -t r
-       0       today 11:00  @work eat lunch
+       0       today 11:00  #work eat lunch
                      11:30
        1       today 20:00  watch movie
     t  2  deliver assignment
 
 ### show items tagged “work”
 
-    $ f @work
+    $ f #work
        0       today 11:00  eat lunch
                      11:30
 
 ## usage
 
-    flo [@tag |what[,from][-to] || [-c id] [-T tag] -w what [-f from | -t to] || -r id]
+    flo [#tag |what[,from][-to] || [-c id] [-T tag] -w what [-f from | -t to] || -r id]
 
 ### date formats
 
