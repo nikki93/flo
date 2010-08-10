@@ -438,7 +438,7 @@ void free_items(struct item *items, const size_t n) {
 
 int write_item_to_stream(
 	FILE *f,
-	const char* tag,
+	const char *tag,
 	const char *what,
 	time_t from,
 	time_t to) {
