@@ -41,9 +41,9 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 	Parses a short version of the input string.
 */
 int read_args_short(struct args *a, const int argc, char *argv[]) {
-	int i;
 	char line[LINE_LENGTH];
 	char *rest = &line[0];
+	int i;
 	int n;
 	size_t len;
 
@@ -67,6 +67,7 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 		else if (strlen(line) > 1) {
 			a->tag = calloc(strlen(line), 1);
 			strncpy(a->tag, &line[1], strlen(line) - 1);
+
 			return 2;
 		}
 		else
@@ -105,8 +106,8 @@ void free_args(struct args *a) {
 }
 
 int list_items(struct args *a) {
-	struct item *items;
 	size_t n;
+	struct item *items;
 
 	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
 
@@ -129,14 +130,14 @@ int add_item(struct args *a) {
 	time_t from = 0;
 	time_t to = 0;
 
-	if (a->what == 0)
+	if (a->what == NULL)
 		fail(a, NULL, 1);
 
-	if (a->from != 0)
+	if (a->from != NULL)
 		if (parse_datestr(&from, a->from) == 0)
 			fail(a, "Could not parse from-date.", 1);
 
-	if (a->to != 0)
+	if (a->to != NULL)
 		if (parse_datestr(&to, a->to) == 0)
 			fail(a, "Could not parse to-date.", 1);
 
@@ -150,8 +151,8 @@ int add_item(struct args *a) {
 
 int change_item(struct args *a) {
 	int n;
-	struct item *items;
 	struct item *it;
+	struct item *items;
 
 	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
 
@@ -165,19 +166,18 @@ int change_item(struct args *a) {
 	}
 
 	qsort(items, n, sizeof(struct item), sort_items);
-
 	it = &items[a->id];
 
-	if (a->what != 0) {
+	if (a->what != NULL) {
 		free(it->what);
 		it->what = malloc(strlen(a->what) + 1);
 		strcpy(it->what, a->what);
 	}
 
-	if (a->tag != 0) {
+	if (a->tag != NULL) {
 		if (strcmp(a->tag, "r") == 0) {
 			free(it->tag);
-			it->tag = 0;
+			it->tag = NULL;
 		}
 		else {
 			free(it->tag);
@@ -186,7 +186,7 @@ int change_item(struct args *a) {
 		}
 	}
 
-	if (a->from != 0) {
+	if (a->from != NULL) {
 		if (strcmp(a->from, "r") == 0)
 			it->from = 0;
 		else
@@ -194,7 +194,7 @@ int change_item(struct args *a) {
 				fail(a, "Could not parse from-date.", 1);
 	}
 
-	if (a->to != 0) {
+	if (a->to != NULL) {
 		if (strcmp(a->to, "r") == 0)
 			it->to = 0;
 		else
@@ -203,7 +203,6 @@ int change_item(struct args *a) {
 	}
 
 	write_items(items, n, -1);
-	
 	free_args(a);
 	free_items(items, n);
 
@@ -226,9 +225,7 @@ int remove_item(struct args *a) {
 	}
 
 	qsort(items, n, sizeof(struct item), sort_items);
-
 	write_items(items, n, a->id);
-
 	free_args(a);
 	free_items(items, n);
 
@@ -236,10 +233,10 @@ int remove_item(struct args *a) {
 }
 
 int read_items(struct item *items) {
-	char fn[256];
 	FILE *f;
-	int n;
+	char fn[256];
 	char line[LINE_LENGTH];
+	int n;
 
 	get_filename(fn);
 
@@ -255,8 +252,8 @@ int read_items(struct item *items) {
 }
 
 int write_items(const struct item *items, const int n, int except) {
-	char fn[256];
 	FILE *f;
+	char fn[256];
 	int i;
 
 	get_filename(fn);
@@ -282,8 +279,8 @@ int write_items(const struct item *items, const int n, int except) {
 }
 
 int write_item(struct args *a, const time_t from, const time_t to) {
-	char fn[256];
 	FILE *f;
+	char fn[256];
 
 	get_filename(fn);
 
@@ -291,7 +288,6 @@ int write_item(struct args *a, const time_t from, const time_t to) {
 		return 0;
 
 	write_item_to_stream(f, a->what, a->tag, from, to);
-
 	fclose(f);
 
 	return 1;
@@ -299,13 +295,17 @@ int write_item(struct args *a, const time_t from, const time_t to) {
 
 int is_today(const struct tm *tm) {
 	time_t t;
+
 	t = time(NULL);
+
 	return ARE_DATES_EQUAL(localtime(&t), tm);
 }
 
 int is_tomorrow(const struct tm *tm) {
 	time_t t;
+
 	t = time(NULL) + 172800;
+
 	return ARE_DATES_EQUAL(localtime(&t), tm);
 }
 
@@ -321,6 +321,7 @@ void format_date(char *s, const time_t t1, const time_t t2) {
 
 		if (ARE_DATES_EQUAL(&tm2, &tm1)) {
 			strftime(s, 17, "           %H:%M", &tm1);
+
 			return;
 		}
 	}
@@ -330,13 +331,13 @@ void format_date(char *s, const time_t t1, const time_t t2) {
 	else if (is_tomorrow(&tm1))
 		strftime(s, 17, "  tomorrow %H:%M", &tm1);
 	else
-		strftime(s, 17, DATE_FORMAT, &tm1);
+		strftime(s, 17, "%Y-%m-%d %H:%M", &tm1);
 }
 
 void print_items(const struct item *items, const int n, const char *tag) {
+	char s[17];
 	int i;
 	struct item *it;
-	char s[17];
 
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
@@ -352,7 +353,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 		if (IS_TODO(it)) {
 			printf("t% 3d  ", i);
 
-			if (it->tag != 0 && tag == NULL)
+			if (it->tag != NULL && tag == NULL)
 				printf("%s: ", it->tag);
 
 			printf("%s\n", it->what);
@@ -361,7 +362,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 			format_date(s, it->to, 0);
 			printf("d% 3d  %s  ", i, s);
 
-			if (it->tag != 0 && tag == NULL)
+			if (it->tag != NULL && tag == NULL)
 				printf("%s: ", it->tag);
 
 			printf("%s\n", it->what);
@@ -370,7 +371,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 			format_date(s, it->from, 0);
 			printf("% 4d  %s  ", i, s);
 
-			if (it->tag != 0 && tag == NULL)
+			if (it->tag != NULL && tag == NULL)
 				printf("%s: ", it->tag);
 
 			printf("%s\n", it->what);
@@ -386,13 +387,14 @@ void print_items(const struct item *items, const int n, const char *tag) {
 int compare_items(struct item *ia, struct item* ib) {
 	int res;
 
-	if (ia->tag != 0 && ib->tag != 0) {
+	if (ia->tag != NULL && ib->tag != NULL) {
 		res = strcmp(ia->tag, ib->tag);
+
 		return res == 0 ? strcmp(ia->what, ib->what) : res;
 	}
-	else if (ia->tag != 0 && ib->tag == 0)
+	else if (ia->tag != NULL && ib->tag == NULL)
 		return -1;
-	else if (ia->tag == 0 && ib->tag != 0)
+	else if (ia->tag == NULL && ib->tag != NULL)
 		return 1;
 	else
 		return strcmp(ia->what, ib->what);
@@ -444,12 +446,12 @@ int write_item_to_stream(
 	time_t from,
 	time_t to) {
 
-	if (what != 0)
+	if (what != NULL)
 		fprintf(f, "%s", what);
 
 	fprintf(f, "\t");
 
-	if (tag != 0)
+	if (tag != NULL)
 		fprintf(f, "%s", tag);
 
 	fprintf(f, "\t");
@@ -468,9 +470,9 @@ int write_item_to_stream(
 }
 
 void line_to_item(struct item *it, char *line) {
-	int col;
-	char *token = NULL;
 	char *delims = "\t";
+	char *token = NULL;
+	int col;
 
 	for (col = 0; (token = strsep(&line, delims)) != NULL; col++) {
 		switch (col) {
@@ -500,6 +502,7 @@ void line_to_item(struct item *it, char *line) {
 
 int parse_datestr(time_t *t, const char *s) {
 	char s2[15];
+
 	memset(s2, 0, sizeof(s2));
 
 	if (complete_datestr(s2, s) == 0)
@@ -516,11 +519,11 @@ int parse_datestr(time_t *t, const char *s) {
 	specified is in a short format.
 */
 int complete_datestr(char *s1, const char *s2) {
-	time_t t;
-	struct tm *tm;
-	char year[5];
-	char month[3];
 	char day[3] = "";
+	char month[3];
+	char year[5];
+	struct tm *tm;
+	time_t t;
 
 	time(&t);
 
@@ -564,7 +567,7 @@ int complete_datestr(char *s1, const char *s2) {
 
 	strcat(s1, s2);
 
-	if (day[0] != 0) {
+	if (day[0] != '\0') {
 		memcpy(s1 + 6, day, 2);
 	}
 
@@ -601,8 +604,8 @@ int datestr_to_time(time_t *t, const char *s) {
 	that is before today, increase the month.
 */
 void inc_month(struct tm *tm, const char *s) {
-	int day;
 	char day_tmp[3];
+	int day;
 
 	memset(day_tmp, 0, sizeof(day_tmp));
 
@@ -625,6 +628,7 @@ void inc_month(struct tm *tm, const char *s) {
 
 int ctoi(const char c) {
 	char s[2];
+
 	s[0] = c;
 	s[1] = '\0';
 
