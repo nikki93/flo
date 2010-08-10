@@ -37,9 +37,6 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 	return 1;
 }
 
-/*
-	Parses a short version of the input string.
-*/
 int read_args_short(struct args *a, const int argc, char *argv[]) {
 	char line[LINE_LENGTH];
 	char *rest = &line[0];
@@ -134,11 +131,11 @@ int add_item(struct args *a) {
 		fail(a, NULL, 1);
 
 	if (a->from != NULL)
-		if (parse_datestr(&from, a->from) == 0)
+		if (parse_date(&from, a->from) == 0)
 			fail(a, "Could not parse from-date.", 1);
 
 	if (a->to != NULL)
-		if (parse_datestr(&to, a->to) == 0)
+		if (parse_date(&to, a->to) == 0)
 			fail(a, "Could not parse to-date.", 1);
 
 	if (write_item(a, from, to) == 0)
@@ -190,7 +187,7 @@ int change_item(struct args *a) {
 		if (strcmp(a->from, "r") == 0)
 			it->from = 0;
 		else
-			if (parse_datestr(&it->from, a->from) == 0)
+			if (parse_date(&it->from, a->from) == 0)
 				fail(a, "Could not parse from-date.", 1);
 	}
 
@@ -198,7 +195,7 @@ int change_item(struct args *a) {
 		if (strcmp(a->to, "r") == 0)
 			it->to = 0;
 		else
-			if (parse_datestr(&it->to, a->to) == 0)
+			if (parse_date(&it->to, a->to) == 0)
 				fail(a, "Could not parse to-date.", 1);
 	}
 
@@ -384,7 +381,7 @@ void print_items(const struct item *items, const size_t n, const char *tag) {
 	}
 }
 
-int compare_items(struct item *ia, struct item* ib) {
+int compare_items(const struct item *ia, const struct item *ib) {
 	int res;
 
 	if (ia->tag != NULL && ib->tag != NULL) {
@@ -500,25 +497,21 @@ void line_to_item(struct item *it, char *line) {
 	}
 }
 
-int parse_datestr(time_t *t, const char *s) {
+int parse_date(time_t *t, const char *s) {
 	char s2[15];
 
 	memset(s2, 0, sizeof(s2));
 
-	if (complete_datestr(s2, s) == 0)
+	if (complete_date(s2, s) == 0)
 		return 0;
 
-	if (datestr_to_time(t, s2) == 0)
+	if (date_to_time(t, s2) == 0)
 		return 0;
 
 	return 1;
 }
 
-/*
-	Add the current year or year and month to date string if the date
-	specified is in a short format.
-*/
-int complete_datestr(char *s1, const char *s2) {
+int complete_date(char *s1, const char *s2) {
 	char day[3] = "";
 	char month[3];
 	char year[5];
@@ -547,7 +540,7 @@ int complete_datestr(char *s1, const char *s2) {
 			}
 			else {
 				tm = localtime(&t);
-				inc_month(tm, s2);
+				adjust_month(tm, s2);
 			}
 
 			set_year_and_month(year, month, tm);
@@ -584,7 +577,7 @@ int complete_datestr(char *s1, const char *s2) {
 	return 1;
 }
 
-int datestr_to_time(time_t *t, const char *s) {
+int date_to_time(time_t *t, const char *s) {
 	struct tm tm;
 
 	memset(&tm, 0, sizeof(struct tm));
@@ -599,11 +592,7 @@ int datestr_to_time(time_t *t, const char *s) {
 	}
 }
 
-/*
-	For a short date format, if the user has typed in a day of the month
-	that is before today, increase the month.
-*/
-void inc_month(struct tm *tm, const char *s) {
+void adjust_month(struct tm *tm, const char *s) {
 	char day_tmp[3];
 	int day;
 
