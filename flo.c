@@ -69,9 +69,8 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 			strncpy(a->tag, &line[1], strlen(line) - 1);
 			return 2;
 		}
-		else {
+		else
 			return 0;
-		}
 	}
 
 	n = last_index_of(rest, '-');
@@ -118,9 +117,8 @@ int list_items(struct args *a) {
 		print_items(items, n, a->tag);
 		free_args(a);
 	}
-	else {
+	else
 		print_items(items, n, NULL);
-	}
 
 	free_items(items, n);
 
@@ -188,18 +186,15 @@ int change_item(struct args *a) {
 		}
 	}
 
-	if (a->from != 0)
-	{
-		if (strcmp(a->from, "r") == 0) {
+	if (a->from != 0) {
+		if (strcmp(a->from, "r") == 0)
 			it->from = 0;
-		}
 		else
 			if (parse_datestr(&it->from, a->from) == 0)
 				fail(a, "Could not parse from-date.", 1);
 	}
 
-	if (a->to != 0)
-	{
+	if (a->to != 0) {
 		if (strcmp(a->to, "r") == 0)
 			it->to = 0;
 		else
@@ -251,9 +246,8 @@ int read_items(struct item *items) {
 	if ((f = fopen(fn, "r")) == NULL)
 		return 0;
 
-	for (n = 0; (fgets(line, LINE_LENGTH, f)) != NULL; n++) {
+	for (n = 0; (fgets(line, LINE_LENGTH, f)) != NULL; n++)
 		line_to_item(&items[n], line);
-	}
 
 	fclose(f);
 
@@ -595,10 +589,9 @@ void set_year_and_month(char *year, char *month, const struct tm *tm) {
 int first_index_of(const char *s, const char c) {
 	unsigned int i;
 
-	for (i = 0; i < strlen(s); i++) {
+	for (i = 0; i < strlen(s); i++)
 		if (s[i] == c)
 			return i;
-	}
 
 	return -1;
 }
@@ -606,10 +599,9 @@ int first_index_of(const char *s, const char c) {
 int last_index_of(const char *s, const char c) {
 	int i;
 
-	for (i = strlen(s) - 1; i >= 0; i--) {
+	for (i = strlen(s) - 1; i >= 0; i--)
 		if (s[i] == c)
 			return i;
-	}
 
 	return -1;
 }
