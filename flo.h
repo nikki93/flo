@@ -41,6 +41,7 @@ int write_item(struct args *a, const time_t from, const time_t to);
 int is_same_day(const struct tm *tm1, const struct tm *tm2);
 void format_date(char *s, const size_t len, const time_t t1, const time_t t2);
 void print_items(const struct item *items, const int n, const char *tag);
+int compare_items(struct item *ia, struct item* ib);
 int sort_items(const void *a, const void *b);
 void free_items(struct item *items, const int n);
 int write_item_to_stream(
