@@ -297,36 +297,40 @@ int write_item(struct args *a, const time_t from, const time_t to) {
 	return 1;
 }
 
-int is_same_day(const struct tm *tm1, const struct tm *tm2) {
-	return ((tm1->tm_year == tm2->tm_year && tm1->tm_mon == tm2->tm_mon) &&
-		tm1->tm_mday == tm2->tm_mday);
+int is_today(const struct tm *tm) {
+	time_t t;
+	t = time(NULL);
+	return ARE_DATES_EQUAL(localtime(&t), tm);
 }
 
-void format_date(char *s, const size_t len, const time_t t1, const time_t t2) {
-	struct tm *tm, tm_t1, tm_t2, tm_now;
-	time_t t_now;
+int is_tomorrow(const struct tm *tm) {
+	time_t t;
+	t = time(NULL) + 172800;
+	return ARE_DATES_EQUAL(localtime(&t), tm);
+}
+
+void format_date(char *s, const time_t t1, const time_t t2) {
+	struct tm *tm, tm1, tm2;
 
 	tm = localtime(&t1);
-	memcpy(&tm_t1, tm, sizeof(struct tm));
-
-	t_now = time(NULL);
-	tm = localtime(&t_now);
-	memcpy(&tm_now, tm, sizeof(struct tm));
+	memcpy(&tm1, tm, sizeof(struct tm));
 
 	if (t2 != 0) {
 		tm = localtime(&t2);
-		memcpy(&tm_t2, tm, sizeof(struct tm));
+		memcpy(&tm2, tm, sizeof(struct tm));
 
-		if (is_same_day(&tm_t2, &tm_t1)) {
-			strftime(s, len, "           %H:%M", &tm_t1);
+		if (ARE_DATES_EQUAL(&tm2, &tm1)) {
+			strftime(s, 17, "           %H:%M", &tm1);
 			return;
 		}
 	}
 
-	if (is_same_day(&tm_t1, &tm_now))
-		strftime(s, len, "     today %H:%M", &tm_t1);
+	if (is_today(&tm1))
+		strftime(s, 17, "     today %H:%M", &tm1);
+	else if (is_tomorrow(&tm1))
+		strftime(s, 17, "  tomorrow %H:%M", &tm1);
 	else
-		strftime(s, len, DATE_FORMAT, &tm_t1);
+		strftime(s, 17, DATE_FORMAT, &tm1);
 }
 
 void print_items(const struct item *items, const int n, const char *tag) {
@@ -354,7 +358,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 			printf("%s\n", it->what);
 		}
 		else if (IS_DEADLINE(it)) {
-			format_date(s, sizeof(s), it->to, 0);
+			format_date(s, it->to, 0);
 			printf("d% 3d  %s  ", i, s);
 
 			if (it->tag != 0 && tag == NULL)
@@ -363,7 +367,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 			printf("%s\n", it->what);
 		}
 		else {
-			format_date(s, sizeof(s), it->from, 0);
+			format_date(s, it->from, 0);
 			printf("% 4d  %s  ", i, s);
 
 			if (it->tag != 0 && tag == NULL)
@@ -372,7 +376,7 @@ void print_items(const struct item *items, const int n, const char *tag) {
 			printf("%s\n", it->what);
 
 			if (it->to != 0) {
-				format_date(s, sizeof(s), it->to, it->from);
+				format_date(s, it->to, it->from);
 				printf("      %s\n", s);
 			}
 		}

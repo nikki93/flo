@@ -8,6 +8,9 @@
 #define DATE_FORMAT "%Y-%m-%d %H:%M"
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
 #define IS_TODO(it) (it->from == 0 && it->to == 0)
+#define ARE_DATES_EQUAL(tm1, tm2) (((tm1)->tm_year == (tm2)->tm_year && \
+(tm1)->tm_mon == (tm2)->tm_mon) && (tm1)->tm_mday == (tm2)->tm_mday)
+
 #define ITEM_COUNT 128
 #define LINE_LENGTH 1024
 
@@ -35,7 +38,8 @@ int complete_datestr(char *s1, const char *s2);
 int ctoi(const char c);
 int datestr_to_time(time_t *t, const char *s);
 int first_index_of(const char *s, const char c);
-int is_same_day(const struct tm *tm1, const struct tm *tm2);
+int is_today(const struct tm *tm);
+int is_tomorrow(const struct tm *tm);
 int last_index_of(const char *s, const char c);
 int list_items(struct args *a);
 int parse_datestr(time_t *t, const char *s);
@@ -47,7 +51,7 @@ int sort_items(const void *a, const void *b);
 int write_item(struct args *a, const time_t from, const time_t to);
 int write_items(const struct item *items, const int n, int except);
 void fail(struct args *a, const char *e, const int print_usage);
-void format_date(char *s, const size_t len, const time_t t1, const time_t t2);
+void format_date(char *s, const time_t t1, const time_t t2);
 void free_args(struct args *a);
 void free_items(struct item *items, const int n);
 void get_filename(char *s);
