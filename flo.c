@@ -92,6 +92,9 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 	a->what = calloc(strlen(rest) + 1, 1);
 	strcpy(a->what, rest);	
 
+	if (strlen(a->what) == 0)
+		return 0;
+
 	return 1;
 }
 
