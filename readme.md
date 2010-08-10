@@ -120,10 +120,10 @@ When changing an existing item, setting a date to `r` removes the date.
     alias fe='flo | grep ^[^td]' 
 
     # today’s events and deadlines
-    alias f0='flo | grep today' 
+    alias ftd='flo | grep today' 
 
-    # today’s events and deadlines, all todos
-    alias f0t='flo | grep -E "today|^t"' 
+    # tomorrow’s events and deadlines
+    alias ftm='flo | grep tomorrow' 
 
 ## license
 
