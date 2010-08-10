@@ -68,7 +68,16 @@ Optionally set up `f` as an alias to `flo`.
 
 ### show items tagged “work”
 
+When items with a specific tag is looked up, the tag is not shown in the
+listing.
+
     $ f #work
+       0       today 11:00  eat lunch
+                     11:30
+
+### remove tag
+
+    $ f -c 0 -T r
        0       today 11:00  eat lunch
                      11:30
 
