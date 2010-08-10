@@ -14,8 +14,8 @@
 #define LINE_LENGTH 1024
 
 struct args {
-	char *what;
 	char *tag;
+	char *what;
 	char *from;
 	char *to;
 	int change;
@@ -24,8 +24,8 @@ struct args {
 };
 
 struct item {
-	char *what;
 	char *tag;
+	char *what;
 	time_t from;
 	time_t to;
 };
@@ -47,6 +47,12 @@ int read_args_short(struct args *a, const int argc, char *argv[]);
 int remove_item(struct args *a);
 int sort_items(const void *a, const void *b);
 int write_item(struct args *a, const time_t from, const time_t to);
+int write_item_to_stream(
+	FILE *f,
+	const char *tag,
+	const char *what,
+	const time_t from,
+	time_t to);
 int write_items(const struct item *items, const size_t n, unsigned int except);
 size_t read_items(struct item *items);
 void adjust_month(struct tm *tm, const char *s);
@@ -57,9 +63,3 @@ void free_items(struct item *items, const size_t n);
 void line_to_item(struct item *it, char *line);
 void print_items(const struct item *items, const size_t n, const char *tag);
 void set_year_and_month(char *year, char *month, const struct tm *tm);
-int write_item_to_stream(
-	FILE *f,
-	const char *what,
-	const char *tag,
-	const time_t from,
-	time_t to);

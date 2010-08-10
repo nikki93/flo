@@ -96,8 +96,8 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 }
 
 void free_args(struct args *a) {
-	free(a->what);
 	free(a->tag);
+	free(a->what);
 	free(a->from);
 	free(a->to);
 }
@@ -165,12 +165,6 @@ int change_item(struct args *a) {
 	qsort(items, n, sizeof(struct item), sort_items);
 	it = &items[a->id];
 
-	if (a->what != NULL) {
-		free(it->what);
-		it->what = malloc(strlen(a->what) + 1);
-		strcpy(it->what, a->what);
-	}
-
 	if (a->tag != NULL) {
 		if (strcmp(a->tag, "r") == 0) {
 			free(it->tag);
@@ -181,6 +175,12 @@ int change_item(struct args *a) {
 			it->tag = malloc(strlen(a->tag) + 1);
 			strcpy(it->tag, a->tag);
 		}
+	}
+
+	if (a->what != NULL) {
+		free(it->what);
+		it->what = malloc(strlen(a->what) + 1);
+		strcpy(it->what, a->what);
 	}
 
 	if (a->from != NULL) {
@@ -264,8 +264,8 @@ int write_items(const struct item *items, const size_t n, unsigned int except) {
 
 		write_item_to_stream(
 			f,
-			items[i].what,
 			items[i].tag,
+			items[i].what,
 			items[i].from,
 			items[i].to);
 	}
@@ -284,7 +284,7 @@ int write_item(struct args *a, const time_t from, const time_t to) {
 	if ((f = fopen(s, "a")) == NULL)
 		return 0;
 
-	write_item_to_stream(f, a->what, a->tag, from, to);
+	write_item_to_stream(f, a->tag, a->what, from, to);
 	fclose(f);
 
 	return 1;
@@ -429,8 +429,8 @@ void free_items(struct item *items, const size_t n) {
 	unsigned int i;
 
 	for (i = 0; i < n; i++) {
-		free(items[i].what);
 		free(items[i].tag);
+		free(items[i].what);
 	}
 
 	free(items);
@@ -438,18 +438,18 @@ void free_items(struct item *items, const size_t n) {
 
 int write_item_to_stream(
 	FILE *f,
-	const char *what,
 	const char* tag,
+	const char *what,
 	time_t from,
 	time_t to) {
 
-	if (what != NULL)
-		fprintf(f, "%s", what);
+	if (tag != NULL)
+		fprintf(f, "%s", tag);
 
 	fprintf(f, "\t");
 
-	if (tag != NULL)
-		fprintf(f, "%s", tag);
+	if (what != NULL)
+		fprintf(f, "%s", what);
 
 	fprintf(f, "\t");
 
@@ -475,15 +475,15 @@ void line_to_item(struct item *it, char *line) {
 		switch (col) {
 			case 0:
 				if (strlen(token) > 0) {
-					it->what = malloc(strlen(token) + 1);
-					strcpy(it->what, token);
+					it->tag = malloc(strlen(token) + 1);
+					strcpy(it->tag, token);
 				}
 
 				break;
 			case 1:
 				if (strlen(token) > 0) {
-					it->tag = malloc(strlen(token) + 1);
-					strcpy(it->tag, token);
+					it->what = malloc(strlen(token) + 1);
+					strcpy(it->what, token);
 				}
 
 				break;
