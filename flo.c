@@ -44,8 +44,8 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 	char line[LINE_LENGTH];
 	char *rest = &line[0];
 	int i;
-	int n;
-	size_t len;
+	int ind;
+	size_t n;
 
 	memset(line, 0, sizeof(line));
 
@@ -57,12 +57,12 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 	}
 
 	if (line[0] == '.') {
-		n = first_index_of(line, ' ');
+		ind = first_index_of(line, ' ');
 
-		if (n != -1) {
-			a->tag = calloc(n, 1);
-			strncpy(a->tag, &line[0] + 1, n - 1);
-			rest = &line[0] + n + 1;
+		if (ind != -1) {
+			a->tag = calloc(ind, 1);
+			strncpy(a->tag, &line[0] + 1, ind - 1);
+			rest = &line[0] + ind + 1;
 		}
 		else if (strlen(line) > 1) {
 			a->tag = calloc(strlen(line), 1);
@@ -74,22 +74,22 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 			return 0;
 	}
 
-	n = last_index_of(rest, '-');
+	ind = last_index_of(rest, '-');
 
-	if (n != -1) {
-		len = strlen(rest) - n - 1;
-		a->to = calloc(len + 1, 1);
-		strncpy(a->to, rest + n + 1, len);
-		rest[n] = '\0';
+	if (ind != -1) {
+		n = strlen(rest) - ind - 1;
+		a->to = calloc(n + 1, 1);
+		strncpy(a->to, rest + ind + 1, n);
+		rest[ind] = '\0';
 	}
 
-	n = last_index_of(rest, ',');
+	ind = last_index_of(rest, ',');
 
-	if (n != -1) {
-		len = strlen(rest) - n - 1;
-		a->from = calloc(len + 1, 1);
-		strncpy(a->from, rest + n + 1, len);
-		rest[n] = '\0';
+	if (ind != -1) {
+		n = strlen(rest) - ind - 1;
+		a->from = calloc(n + 1, 1);
+		strncpy(a->from, rest + ind + 1, n);
+		rest[ind] = '\0';
 	}
 
 	a->what = calloc(strlen(rest) + 1, 1);
@@ -150,7 +150,7 @@ int add_item(struct args *a) {
 }
 
 int change_item(struct args *a) {
-	int n;
+	size_t n;
 	struct item *it;
 	struct item *items;
 
@@ -158,7 +158,7 @@ int change_item(struct args *a) {
 
 	n = read_items(items);
 
-	if (n == 0 || (a->id < 0 || a->id >= n)) {
+	if (n == 0 || a->id >= n) {
 		free_items(items, n);
 		fail(a, "Could not find item.", 0);
 
@@ -210,14 +210,14 @@ int change_item(struct args *a) {
 }
 
 int remove_item(struct args *a) {
-	int n;
+	size_t n;
 	struct item *items;
 
 	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
 
 	n = read_items(items);
 
-	if (n == 0 || (a->id < 0 || a->id >= n)) {
+	if (n == 0 || a->id >= n) {
 		free_items(items, n);
 		fail(a, "Could not find item.", 0);
 
@@ -232,7 +232,7 @@ int remove_item(struct args *a) {
 	return list_items(NULL);
 }
 
-int read_items(struct item *items) {
+size_t read_items(struct item *items) {
 	FILE *f;
 	char fn[256];
 	char line[LINE_LENGTH];
@@ -251,10 +251,10 @@ int read_items(struct item *items) {
 	return n;
 }
 
-int write_items(const struct item *items, const int n, int except) {
+int write_items(const struct item *items, const size_t n, unsigned int except) {
 	FILE *f;
 	char fn[256];
-	int i;
+	unsigned int i;
 
 	get_filename(fn);
 
@@ -334,9 +334,9 @@ void format_date(char *s, const time_t t1, const time_t t2) {
 		strftime(s, 17, "%Y-%m-%d %H:%M", &tm1);
 }
 
-void print_items(const struct item *items, const int n, const char *tag) {
+void print_items(const struct item *items, const size_t n, const char *tag) {
 	char s[17];
-	int i;
+	unsigned int i;
 	struct item *it;
 
 	for (i = 0; i < n; i++) {
@@ -428,8 +428,8 @@ int sort_items(const void *a, const void *b) {
 	}
 }
 
-void free_items(struct item *items, const int n) {
-	int i;
+void free_items(struct item *items, const size_t n) {
+	unsigned int i;
 
 	for (i = 0; i < n; i++) {
 		free(items[i].what);
