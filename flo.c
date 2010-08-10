@@ -301,7 +301,7 @@ int is_today(const struct tm *tm) {
 int is_tomorrow(const struct tm *tm) {
 	time_t t;
 
-	t = time(NULL) + 172800;
+	t = time(NULL) + 86400;
 
 	return ARE_DATES_EQUAL(localtime(&t), tm);
 }
@@ -529,7 +529,7 @@ int complete_date(char *s1, const char *s2) {
 				sprintf(day, "%02d", (int)tm->tm_mday);
 			}
 			else if (s2[0] == 't' && s2[1] == 'm') {
-				t += 172800;
+				t += 86400;
 				tm = localtime(&t);
 				sprintf(day, "%02d", (int)tm->tm_mday);
 			}
