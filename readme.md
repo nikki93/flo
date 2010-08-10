@@ -97,6 +97,9 @@ If the year or the month isn’t specified, the current year and month is used.
 For formats without a month, if the date specified is before today’s date, the
 month is set to the next month.
 
+`td`, `tm`, or `+n` can be used in place of `DD`, where `td` is today, `tm` is
+tomorrow, and `n` is the number of days from today.
+
 The value for hours and minutes is set to `00` if no other value is specified.
 
 When changing an existing item, setting a date to `r` removes the date.

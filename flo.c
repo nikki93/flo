@@ -516,20 +516,39 @@ int complete_datestr(char *s1, const char *s2) {
 	struct tm *tm;
 	char year[5];
 	char month[3];
+	char day[3] = "";
 
 	time(&t);
-	tm = localtime(&t);
 
 	switch (strlen(s2)) {
 		case 2:
 		case 4:
 		case 6:
-			inc_month(tm, s2);
+			if (s2[0] == 't' && s2[1] == 'd') {
+				tm = localtime(&t);
+				sprintf(day, "%02d", (int)tm->tm_mday);
+			}
+			else if (s2[0] == 't' && s2[1] == 'm') {
+				t += 172800;
+				tm = localtime(&t);
+				sprintf(day, "%02d", (int)tm->tm_mday);
+			}
+			else if (s2[0] == '+') {
+				t += ctoi(s2[1]) * 86400;
+				tm = localtime(&t);
+				sprintf(day, "%02d", (int)tm->tm_mday);
+			}
+			else {
+				tm = localtime(&t);
+				inc_month(tm, s2);
+			}
+
 			set_year_and_month(year, month, tm);
 			strcat(s1, year);
 			strcat(s1, month);
 			break;
 		case 8:
+			tm = localtime(&t);
 			set_year_and_month(year, month, tm);
 			strcat(s1, year);
 			break;
@@ -540,6 +559,10 @@ int complete_datestr(char *s1, const char *s2) {
 	}
 
 	strcat(s1, s2);
+
+	if (day[0] != 0) {
+		memcpy(s1 + 6, day, 2);
+	}
 
 	switch (strlen(s2)) {
 		case 2:
@@ -594,6 +617,14 @@ void inc_month(struct tm *tm, const char *s) {
 			tm->tm_year++;
 		}
 	}
+}
+
+int ctoi(const char c) {
+	char s[2];
+	s[0] = c;
+	s[1] = '\0';
+
+	return atoi(s);
 }
 
 void set_year_and_month(char *year, char *month, const struct tm *tm) {
