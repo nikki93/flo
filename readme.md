@@ -127,8 +127,8 @@ When changing an existing item, setting a date to `r` removes the date.
 
 ## items file
 
-Items are written to ~/.flo. Each item is stored on a separate line, and the
-fields are separated by a tab.
+Items are written to ~/.flo. Each item is stored on a separate line, and each
+field is separated by a tab.
 
     tag\twhat\tfrom\tto
 
