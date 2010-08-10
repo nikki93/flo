@@ -7,6 +7,7 @@
 
 #define ARE_DATES_EQUAL(tm1, tm2) (((tm1)->tm_year == (tm2)->tm_year && \
 (tm1)->tm_mon == (tm2)->tm_mon) && (tm1)->tm_mday == (tm2)->tm_mday)
+#define GET_FILENAME(s)	sprintf(s, "%s/.flo", getenv("HOME"))
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
 #define IS_TODO(it) (it->from == 0 && it->to == 0)
 #define ITEM_COUNT 128
@@ -53,7 +54,6 @@ void fail(struct args *a, const char *e, const int print_usage);
 void format_date(char *s, const time_t t1, const time_t t2);
 void free_args(struct args *a);
 void free_items(struct item *items, const size_t n);
-void get_filename(char *s);
 void line_to_item(struct item *it, char *line);
 void print_items(const struct item *items, const size_t n, const char *tag);
 void set_year_and_month(char *year, char *month, const struct tm *tm);

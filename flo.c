@@ -231,13 +231,13 @@ int remove_item(struct args *a) {
 
 size_t read_items(struct item *items) {
 	FILE *f;
-	char fn[256];
 	char line[LINE_LENGTH];
+	char s[256];
 	int n;
 
-	get_filename(fn);
+	GET_FILENAME(s);
 
-	if ((f = fopen(fn, "r")) == NULL)
+	if ((f = fopen(s, "r")) == NULL)
 		return 0;
 
 	for (n = 0; (fgets(line, LINE_LENGTH, f)) != NULL; n++)
@@ -250,12 +250,12 @@ size_t read_items(struct item *items) {
 
 int write_items(const struct item *items, const size_t n, unsigned int except) {
 	FILE *f;
-	char fn[256];
+	char s[256];
 	unsigned int i;
 
-	get_filename(fn);
+	GET_FILENAME(s);
 
-	if ((f = fopen(fn, "w")) == NULL)
+	if ((f = fopen(s, "w")) == NULL)
 		return 0;
 
 	for (i = 0; i < n; i++) {
@@ -277,11 +277,11 @@ int write_items(const struct item *items, const size_t n, unsigned int except) {
 
 int write_item(struct args *a, const time_t from, const time_t to) {
 	FILE *f;
-	char fn[256];
+	char s[256];
 
-	get_filename(fn);
+	GET_FILENAME(s);
 
-	if ((f = fopen(fn, "a")) == NULL)
+	if ((f = fopen(s, "a")) == NULL)
 		return 0;
 
 	write_item_to_stream(f, a->what, a->tag, from, to);
@@ -647,10 +647,6 @@ int last_index_of(const char *s, const char c) {
 			return i;
 
 	return -1;
-}
-
-void get_filename(char *s) {
-	sprintf(s, "%s/.flo", getenv("HOME"));
 }
 
 void fail(struct args *a, const char *e, const int print_usage) {
