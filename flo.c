@@ -354,7 +354,7 @@ void print_items(const struct item *items, const size_t n, const char *tag) {
 			printf("t% 3d  ", i);
 
 			if (it->tag != NULL && tag == NULL)
-				printf("%s: ", it->tag);
+				printf(".%s ", it->tag);
 
 			printf("%s\n", it->what);
 		}
@@ -363,7 +363,7 @@ void print_items(const struct item *items, const size_t n, const char *tag) {
 			printf("d% 3d  %s  ", i, s);
 
 			if (it->tag != NULL && tag == NULL)
-				printf("%s: ", it->tag);
+				printf(".%s ", it->tag);
 
 			printf("%s\n", it->what);
 		}
@@ -372,7 +372,7 @@ void print_items(const struct item *items, const size_t n, const char *tag) {
 			printf("% 4d  %s  ", i, s);
 
 			if (it->tag != NULL && tag == NULL)
-				printf("%s: ", it->tag);
+				printf(".%s ", it->tag);
 
 			printf("%s\n", it->what);
 
