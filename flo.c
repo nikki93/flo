@@ -1,10 +1,36 @@
 #include "flo.h"
 
+static int compare_items(const struct item *ia, const struct item *ib);
+static int complete_date(char *s1, const char *s2);
+static int ctoi(const char c);
+static int date_to_time(time_t *t, const char *s);
+static int first_index_of(const char *s, const char c);
+static int is_today(const struct tm *tm);
+static int is_tomorrow(const struct tm *tm);
+static int last_index_of(const char *s, const char c);
+static int parse_date(time_t *t, const char *s);
+static int sort_items(const void *a, const void *b);
+static int write_item(struct args *a, const time_t from, const time_t to);
+static int write_item_to_stream(
+	FILE *f,
+	const char *tag,
+	const char *what,
+	const time_t from,
+	time_t to);
+static int write_items(const struct item *items, const size_t n, unsigned int except);
+static size_t read_items(struct item *items);
+static void adjust_month(struct tm *tm, const char *s);
+static void format_date(char *s, const time_t t1, const time_t t2);
+static void free_items(struct item *items, const size_t n);
+static void line_to_item(struct item *it, char *line);
+static void print_items(const struct item *items, const size_t n, const char *tag);
+static void set_year_and_month(char *year, char *month, const struct tm *tm);
+
 int read_args(struct args *a, const int argc, char *argv[]) {
-	char c;
+	int c;
 
 	while ((c = getopt(argc, argv, "c:r:T:w:f:t:")) != -1) {
-		switch (c) {
+		switch ((char)c) {
 			case 'c':
 				a->change = 1;
 				a->id = atoi(optarg);
@@ -232,7 +258,7 @@ int remove_item(struct args *a) {
 	return list_items(NULL);
 }
 
-size_t read_items(struct item *items) {
+static size_t read_items(struct item *items) {
 	FILE *f;
 	char line[LINE_LENGTH];
 	char s[256];
@@ -251,7 +277,7 @@ size_t read_items(struct item *items) {
 	return n;
 }
 
-int write_items(const struct item *items, const size_t n, unsigned int except) {
+static int write_items(const struct item *items, const size_t n, unsigned int except) {
 	FILE *f;
 	char s[256];
 	unsigned int i;
@@ -278,7 +304,7 @@ int write_items(const struct item *items, const size_t n, unsigned int except) {
 	return 1;
 }
 
-int write_item(struct args *a, const time_t from, const time_t to) {
+static int write_item(struct args *a, const time_t from, const time_t to) {
 	FILE *f;
 	char s[256];
 
@@ -293,7 +319,7 @@ int write_item(struct args *a, const time_t from, const time_t to) {
 	return 1;
 }
 
-int is_today(const struct tm *tm) {
+static int is_today(const struct tm *tm) {
 	time_t t;
 
 	t = time(NULL);
@@ -301,7 +327,7 @@ int is_today(const struct tm *tm) {
 	return ARE_DATES_EQUAL(localtime(&t), tm);
 }
 
-int is_tomorrow(const struct tm *tm) {
+static int is_tomorrow(const struct tm *tm) {
 	time_t t;
 
 	t = time(NULL) + 86400;
@@ -309,7 +335,7 @@ int is_tomorrow(const struct tm *tm) {
 	return ARE_DATES_EQUAL(localtime(&t), tm);
 }
 
-void format_date(char *s, const time_t t1, const time_t t2) {
+static void format_date(char *s, const time_t t1, const time_t t2) {
 	struct tm *tm, tm1, tm2;
 
 	tm = localtime(&t1);
@@ -334,7 +360,7 @@ void format_date(char *s, const time_t t1, const time_t t2) {
 		strftime(s, 17, "%Y-%m-%d %H:%M", &tm1);
 }
 
-void print_items(const struct item *items, const size_t n, const char *tag) {
+static void print_items(const struct item *items, const size_t n, const char *tag) {
 	char s[17];
 	unsigned int i;
 	struct item *it;
@@ -384,7 +410,7 @@ void print_items(const struct item *items, const size_t n, const char *tag) {
 	}
 }
 
-int compare_items(const struct item *ia, const struct item *ib) {
+static int compare_items(const struct item *ia, const struct item *ib) {
 	int res;
 
 	if (ia->tag != NULL && ib->tag != NULL) {
@@ -400,7 +426,7 @@ int compare_items(const struct item *ia, const struct item *ib) {
 		return strcmp(ia->what, ib->what);
 }
 
-int sort_items(const void *a, const void *b) {
+static int sort_items(const void *a, const void *b) {
 	struct item *ia = (struct item *)a;
 	struct item *ib = (struct item *)b;
 
@@ -428,7 +454,7 @@ int sort_items(const void *a, const void *b) {
 	}
 }
 
-void free_items(struct item *items, const size_t n) {
+static void free_items(struct item *items, const size_t n) {
 	unsigned int i;
 
 	for (i = 0; i < n; i++) {
@@ -439,7 +465,7 @@ void free_items(struct item *items, const size_t n) {
 	free(items);
 }
 
-int write_item_to_stream(
+static int write_item_to_stream(
 	FILE *f,
 	const char *tag,
 	const char *what,
@@ -469,7 +495,7 @@ int write_item_to_stream(
 	return 1;
 }
 
-void line_to_item(struct item *it, char *line) {
+static void line_to_item(struct item *it, char *line) {
 	char *delims = "\t";
 	char *token = NULL;
 	int col;
@@ -500,7 +526,7 @@ void line_to_item(struct item *it, char *line) {
 	}
 }
 
-int parse_date(time_t *t, const char *s) {
+static int parse_date(time_t *t, const char *s) {
 	char s2[15];
 
 	memset(s2, 0, sizeof(s2));
@@ -514,7 +540,7 @@ int parse_date(time_t *t, const char *s) {
 	return 1;
 }
 
-int complete_date(char *s1, const char *s2) {
+static int complete_date(char *s1, const char *s2) {
 	char day[3] = "";
 	char month[3];
 	char year[5];
@@ -580,7 +606,7 @@ int complete_date(char *s1, const char *s2) {
 	return 1;
 }
 
-int date_to_time(time_t *t, const char *s) {
+static int date_to_time(time_t *t, const char *s) {
 	struct tm tm;
 
 	memset(&tm, 0, sizeof(struct tm));
@@ -618,7 +644,7 @@ void adjust_month(struct tm *tm, const char *s) {
 	}
 }
 
-int ctoi(const char c) {
+static int ctoi(const char c) {
 	char s[2];
 
 	s[0] = c;
@@ -627,12 +653,12 @@ int ctoi(const char c) {
 	return atoi(s);
 }
 
-void set_year_and_month(char *year, char *month, const struct tm *tm) {
+static void set_year_and_month(char *year, char *month, const struct tm *tm) {
 	sprintf(year, "%d", 1900 + tm->tm_year);
 	sprintf(month, "%02d", tm->tm_mon + 1);
 }
 
-int first_index_of(const char *s, const char c) {
+static int first_index_of(const char *s, const char c) {
 	unsigned int i;
 
 	for (i = 0; i < strlen(s); i++)
@@ -642,7 +668,7 @@ int first_index_of(const char *s, const char c) {
 	return -1;
 }
 
-int last_index_of(const char *s, const char c) {
+static int last_index_of(const char *s, const char c) {
 	int i;
 
 	for (i = strlen(s) - 1; i >= 0; i--)
