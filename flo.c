@@ -33,11 +33,11 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 		switch ((char)c) {
 			case 'c':
 				a->change = 1;
-				a->id = atoi(optarg);
+				a->id = strtol(optarg, NULL, 10);
 				break;
 			case 'r':
 				a->remove = 1;
-				a->id = atoi(optarg);
+				a->id = strtol(optarg, NULL, 10);
 				break;
 			case 'T':
 				a->tag = malloc(strlen(optarg) + 1);
@@ -517,10 +517,10 @@ static void line_to_item(struct item *it, char *line) {
 
 				break;
 			case 2:
-				it->from = atoi(token);
+				it->from = strtol(token, NULL, 10);
 				break;
 			case 3:
-				it->to = atoi(token);
+				it->to = strtol(token, NULL, 10);
 				break;
 		}
 	}
@@ -622,19 +622,11 @@ static int date_to_time(time_t *t, const char *s) {
 }
 
 void adjust_month(struct tm *tm, const char *s) {
-	char day_tmp[3];
-	int day;
+	char day[3];
 
-	memset(day_tmp, 0, sizeof(day_tmp));
+        strncpy(day, s, 2);
 
-	if (s[0] == '0')
-		day_tmp[0] = s[1];
-	else
-		memcpy(day_tmp, s, 2);
-
-	day = atoi(day_tmp);
-
-	if (day < tm->tm_mday) {
+	if (strtol(day, NULL, 10) < tm->tm_mday) {
 		if (tm->tm_mon < 11)
 			tm->tm_mon += 1;
 		else {
