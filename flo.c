@@ -642,7 +642,7 @@ static int ctoi(const char c) {
 	s[0] = c;
 	s[1] = '\0';
 
-	return atoi(s);
+	return strtol(s, NULL, 10);
 }
 
 static void set_year_and_month(char *year, char *month, const struct tm *tm) {
