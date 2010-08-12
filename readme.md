@@ -29,7 +29,7 @@ Optionally set up `f` as an alias to `flo`.
 A tag starts with `.` and does not contain spaces.
 
     $ f .work eat lunch,061100-061130
-       0       today 11:00  work: eat lunch
+       0       today 11:00  .work eat lunch
                      11:30
     d  1  2010-10-01 12:00  deliver assignment
     t  2  clean apartment
@@ -39,7 +39,7 @@ A tag starts with `.` and does not contain spaces.
 To add an event for today, `td` can be used.
 
     $ f watch movie,td1900
-       0       today 11:00  work: eat lunch
+       0       today 11:00  .work eat lunch
                      11:30
        1       today 19:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
@@ -48,7 +48,7 @@ To add an event for today, `td` can be used.
 ### change time of an event
 
     $ f -c 1 -f td2000
-       0       today 11:00  work: eat lunch
+       0       today 11:00  .work eat lunch
                      11:30
        1       today 20:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
@@ -57,7 +57,7 @@ To add an event for today, `td` can be used.
 ### remove todo
 
     $ f -r 3
-       0       today 11:00  work: eat lunch
+       0       today 11:00  .work eat lunch
                      11:30
        1       today 20:00  watch movie
     d  2  2010-10-01 12:00  deliver assignment
@@ -65,7 +65,7 @@ To add an event for today, `td` can be used.
 ### change deadline into todo
 
     $ f -c 2 -t r
-       0       today 11:00  work: eat lunch
+       0       today 11:00  .work eat lunch
                      11:30
        1       today 20:00  watch movie
     t  2  deliver assignment
