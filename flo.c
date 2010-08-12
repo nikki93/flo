@@ -40,8 +40,17 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 				a->id = strtol(optarg, NULL, 10);
 				break;
 			case 'T':
-				a->tag = malloc(strlen(optarg) + 1);
-				strcpy(a->tag, optarg);
+				if (optarg[0] == '.') {
+					a->tag = malloc(strlen(optarg));
+					strncpy(
+						a->tag,
+						optarg + 1,
+						strlen(optarg) - 1);
+				}
+				else {
+					a->tag = malloc(strlen(optarg) + 1);
+					strcpy(a->tag, optarg);
+				}
 				break;
 			case 'w':
 				a->what = malloc(strlen(optarg) + 1);
