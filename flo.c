@@ -278,8 +278,10 @@ static size_t read_items(struct item *items) {
 	if ((f = fopen(s, "r")) == NULL)
 		return 0;
 
-	for (n = 0; (fgets(line, LINE_LENGTH, f)) != NULL; n++)
+	for (n = 0; (fgets(line, LINE_LENGTH, f)) != NULL; n++) {
+		line[strlen(line) - 1] = '\0';
 		line_to_item(&items[n], line);
+	}
 
 	fclose(f);
 
@@ -505,11 +507,6 @@ static int write_item_to_stream(
 	time_t from,
 	time_t to) {
 
-	if (tag != NULL)
-		fprintf(f, "%s", tag);
-
-	fprintf(f, "\t");
-
 	if (what != NULL)
 		fprintf(f, "%s", what);
 
@@ -522,6 +519,11 @@ static int write_item_to_stream(
 
 	if (to != 0)
 		fprintf(f, "%ld", to);
+
+	fprintf(f, "\t");
+
+	if (tag != NULL)
+		fprintf(f, "%s", tag);
 
 	fprintf(f, "\n");
 
@@ -537,23 +539,23 @@ static void line_to_item(struct item *it, char *line) {
 		switch (col) {
 			case 0:
 				if (strlen(token) > 0) {
-					it->tag = malloc(strlen(token) + 1);
-					strcpy(it->tag, token);
-				}
-
-				break;
-			case 1:
-				if (strlen(token) > 0) {
 					it->what = malloc(strlen(token) + 1);
 					strcpy(it->what, token);
 				}
 
 				break;
-			case 2:
+			case 1:
 				it->from = strtol(token, NULL, 10);
 				break;
-			case 3:
+			case 2:
 				it->to = strtol(token, NULL, 10);
+				break;
+			case 3:
+				if (strlen(token) > 0) {
+					it->tag = malloc(strlen(token) + 1);
+					strcpy(it->tag, token);
+				}
+
 				break;
 		}
 	}
