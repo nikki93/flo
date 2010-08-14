@@ -710,8 +710,8 @@ void fail(struct args *a, const char *e, const int print_usage) {
 		puts(e);
 
 	if (print_usage)
-    		puts("Usage: flo [.tag |what[,from][-to] || [-c id] [-T tag] -w\
- what [-f from | -t to] || -r id]");
+		puts("Usage: flo [.tag | what[,from][-to] || [-T tag] -w what [\
+-f from | -t to] || -c id -T tag | -w what | -f from | -t to  || -r id]");
 
 	free_args(a);
 
