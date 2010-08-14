@@ -17,14 +17,13 @@ Today’s date is `2010-08-05` in these examples.
 
 ### Add an event
 
-To add an event, specify what to do, the from-, and the to-date.
+To add an event, specify what to do, a from-, and optionally a to-date.
 
     $ f eat lunch,051100-051130
        0       today 11:00  eat lunch
                      11:30
 
-Alternatively, use `td` in place of today’s date. You aren’t required to specify
-a to-date when adding an event.
+Alternatively, use `td` in place of today’s date.
 
     $ f watch movie,td19
        0       today 11:00  eat lunch
