@@ -8,7 +8,6 @@ A command line app for organizing events, to-dos, and deadlines.
     cp flo /usr/local/bin/
 
     # Optional
-
     echo "alias f='flo'" >> ~/.bashrc
 
 ## Getting started
