@@ -2,7 +2,7 @@
 
 flo is a command line application that keeps you in check. It’s small and fast.
 
-## installation
+## Installation
 
     make
     cp flo /usr/local/bin/
@@ -11,85 +11,112 @@ Optionally set up `f` as an alias to `flo`.
 
     echo "alias f='flo'" >> ~/.bashrc
 
-## getting started
+## Getting started
 
-### add todo
+The current date is 2010-08-05 in these examples.
 
-    $ f clean apartment
-    t  0  clean apartment
+### Adding an event
 
-### add deadline
+To add an event, specify what to do, the from- and the to-date.
 
-    $ f deliver assignment-10011200
-    d  0  2010-10-01 12:00  deliver assignment
-    t  1  clean apartment
+    ~ $ f eat lunch,051100-051130
+       0       today 11:00  eat lunch
+		     11:30
 
-### add tagged event
+Alternatively, use `td` in place of today’s date. A shorter date format is
+used with only the date and the hours. The year and month are set to the
+current. The minutes are set to 00.
 
-A tag starts with `.` and does not contain spaces.
+You aren’t required to specify a to-date when adding an event.
 
-    $ f .work eat lunch,061100-061130
-       0       today 11:00  .work eat lunch
-                     11:30
-    d  1  2010-10-01 12:00  deliver assignment
+    ~ $ f watch movie,td19
+       0       today 11:00  eat lunch
+		     11:30
+       1       today 19:00  watch movie
+
+### Adding a to-do
+
+A to-do is like an event, but without any dates. A to-do is prefixed with a `t`.
+
+    ~ $ f clean apartment
+       0       today 11:00  eat lunch
+		     11:30
+       1       today 19:00  watch movie
     t  2  clean apartment
 
-### add event
+### Adding a deadline
 
-To add an event for today, `td` can be used.
+An event with only a to-date is a deadline. When using a short format and the
+date is less than the date of today, flo assumes that it belongs to the next
+month.
 
-    $ f watch movie,td1900
-       0       today 11:00  .work eat lunch
-                     11:30
+    ~ $ f deliver assignment-04
+       0       today 11:00  eat lunch
+		     11:30
        1       today 19:00  watch movie
-    d  2  2010-10-01 12:00  deliver assignment
+    d  2  2010-09-04 00:00  deliver assignment
     t  3  clean apartment
 
-### change time of an event
+### Tagging an item
 
-    $ f -c 1 -f td2000
-       0       today 11:00  .work eat lunch
-                     11:30
-       1       today 20:00  watch movie
-    d  2  2010-10-01 12:00  deliver assignment
+An item might be tagged. A tag starts with ‘.’ and does not contain spaces.
+`2` is the current id of the item. This number is used when changing or
+removing items.
+
+    ~ $ f .work meeting,tm14
+       0       today 11:00  eat lunch
+		     11:30
+       1       today 19:00  watch movie
+       2    tomorrow 14:00  .work meeting
+    d  2  2010-09-04 00:00  deliver assignment
+    t  4  clean apartment
+
+### Changing an item
+
+It’s possible to change the `T` – tag, `w` – what, `f` – from-date, and
+`t` – to-date of an item.
+
+    ~ $ f -c 2 -f tm15
+       0       today 11:00  eat lunch
+		     11:30
+       1       today 19:00  watch movie
+       2    tomorrow 15:00  .work meeting
+    d  2  2010-09-04 00:00  deliver assignment
+    t  4  clean apartment
+
+I recommend using short tags such as ‘w’ for work, ‘u’ for university,
+‘b’ for things to buy etc.
+
+    ~ $ f -c 2 -T w
+       0       today 11:00  eat lunch
+		     11:30
+       1       today 19:00  watch movie
+       2    tomorrow 15:00  .w meeting
+    d  2  2010-09-04 00:00  deliver assignment
+    t  4  clean apartment
+
+### Looking up tagged items
+
+Looking up items belonging to a tag then becomes fast.
+
+    ~ $ f .w
+       2    tomorrow 15:00  meeting
+
+### Removing items
+
+After eating your lunch, you might want to remove it.
+
+    ~ $ f -r 0
+       0       today 19:00  watch movie
+       1    tomorrow 15:00  .w meeting
+    d  2  2010-09-04 00:00  deliver assignment
     t  3  clean apartment
 
-### remove todo
-
-    $ f -r 3
-       0       today 11:00  .work eat lunch
-                     11:30
-       1       today 20:00  watch movie
-    d  2  2010-10-01 12:00  deliver assignment
-
-### change deadline into todo
-
-    $ f -c 2 -t r
-       0       today 11:00  .work eat lunch
-                     11:30
-       1       today 20:00  watch movie
-    t  2  deliver assignment
-
-### show items tagged “work”
-
-When items with a specific tag is looked up, the tag is not shown in the
-listing.
-
-    $ f .work
-       0       today 11:00  eat lunch
-                     11:30
-
-### remove tag
-
-    $ f -c 0 -T r
-       0       today 11:00  eat lunch
-                     11:30
-
-## usage
+## Usage
 
     flo [.tag |what[,from][-to] || [-c id] [-T tag] -w what [-f from | -t to] || -r id]
 
-### date formats
+### Date formats
 
     YYMMDDhhmm
       MMDDhhmm
@@ -108,7 +135,7 @@ The value for hours and minutes is set to `00` if no other value is specified.
 
 When changing an existing item, setting a date to `r` removes the date.
 
-## aliases
+## Aliases
 
     # all todos
     alias ft='flo | grep ^t' 
@@ -125,13 +152,13 @@ When changing an existing item, setting a date to `r` removes the date.
     # tomorrow’s events and deadlines
     alias ftm='flo | grep tomorrow' 
 
-## items file
+## Items file
 
 Items are written to ~/.flo. Each item is stored on a separate line, and each
 field is separated by a tab.
 
     tag\twhat\tfrom\tto
 
-## license
+## License
 
 ISC.
