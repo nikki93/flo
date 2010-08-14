@@ -61,7 +61,7 @@ An item might be tagged. A tag starts with ‘.’ and does not contain spaces.
 
     $ f .work meeting,tm14
        0       today 11:00  eat lunch
-		     11:30
+                     11:30
        1       today 19:00  watch movie
        2    tomorrow 14:00  .work meeting
     d  2  2010-09-04 00:00  deliver assignment
@@ -78,7 +78,7 @@ removing items.
 
     $ f -c 2 -f tm15
        0       today 11:00  eat lunch
-		     11:30
+                     11:30
        1       today 19:00  watch movie
        2    tomorrow 15:00  .work meeting
     d  2  2010-09-04 00:00  deliver assignment
@@ -89,7 +89,7 @@ I recommend using short tags such as ‘w’ for work, ‘u’ for university,
 
     $ f -c 2 -T w
        0       today 11:00  eat lunch
-		     11:30
+                     11:30
        1       today 19:00  watch movie
        2    tomorrow 15:00  .w meeting
     d  2  2010-09-04 00:00  deliver assignment
