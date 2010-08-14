@@ -104,7 +104,7 @@ in the listing.
     $ f .w
        2    tomorrow 15:00  meeting
 
-### Remove items
+### Remove an item
 
 After eating your lunch, you might want to remove the event.
 
