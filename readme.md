@@ -7,7 +7,7 @@ A command line app for organizing events, to-dos, and deadlines.
     make
     cp flo /usr/local/bin/
 
-Optionally set up `f` as an alias to `flo`.
+    # Optional
 
     echo "alias f='flo'" >> ~/.bashrc
 
@@ -128,19 +128,19 @@ When changing an existing item, setting a date to `r` removes the date.
 
 ## Aliases
 
-    # all todos
-    alias ft='flo | grep ^t' 
-
-    # all deadlines
-    alias fd='flo | grep ^d' 
-
-    # all events
+    # Events
     alias fe='flo | grep ^[^td]' 
 
-    # today’s events and deadlines
+    # To-dos
+    alias ft='flo | grep ^t' 
+
+    # Deadlines
+    alias fd='flo | grep ^d' 
+
+    # Today’s events and deadlines
     alias ftd='flo | grep today' 
 
-    # tomorrow’s events and deadlines
+    # Tomorrow’s events and deadlines
     alias ftm='flo | grep tomorrow' 
 
 ## Items file
