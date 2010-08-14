@@ -448,18 +448,42 @@ static int sort_items(const void *a, const void *b) {
 	else if (IS_DEADLINE(ia)) {
 		if (IS_TODO(ib))
 			return -1;
-		else if (IS_DEADLINE(ib))
-			return ia->to > ib->to;
-		else
-			return ia->to > ib->from;
+		else if (IS_DEADLINE(ib)) {
+			if (ia->to > ib->to)
+				return 1;
+			else if (ia->to < ib->to)
+				return -1;
+			else
+				return 0;
+		}
+		else {
+			if (ia->to > ib->from)
+				return 1;
+			else if (ia->to < ib->from)
+				return -1;
+			else
+				return 0;
+		}
 	}
 	else {
 		if (IS_TODO(ib))
 			return -1;
-		else if (IS_DEADLINE(ib))
-			return ia->from > ib->to;
-		else
-			return ia->from > ib->from;
+		else if (IS_DEADLINE(ib)) {
+			if (ia->from > ib->to)
+				return 1;
+			else if (ia->from < ib->to)
+				return -1;
+			else
+				return 0;
+		}
+		else {
+			if (ia->from > ib->from)
+				return 1;
+			else if (ia->from < ib->from)
+				return -1;
+			else
+				return 0;
+		}
 	}
 }
 
