@@ -1,6 +1,6 @@
 # flo
 
-A minimalistic command line app for organizing events, to-dos, and deadlines.
+A command line app for organizing events, to-dos, and deadlines.
 
 ## Installation
 
@@ -146,7 +146,7 @@ When changing an existing item, setting a date to `r` removes the date.
 
 ## Items file
 
-Items are written to $XDG_CONFIG_HOME/.flo. Each item is stored on a separate
+Items are written to `$XDG_CONFIG_HOME/.flo`. Each item is stored on a separate
 line, and each field is separated by a tab.
 
     what\tfrom\tto\ttag
