@@ -17,30 +17,30 @@ The current date is 2010-08-05 in these examples.
 
 ### Adding an event
 
-To add an event, specify what to do, the from- and the to-date.
+To add an event, specify what to do, the from- and the to-date. `0` is the
+current id of the item. This number is used when changing or removing items.
 
-    ~ $ f eat lunch,051100-051130
+    $ f eat lunch,051100-051130
        0       today 11:00  eat lunch
-		     11:30
+                     11:30
 
-Alternatively, use `td` in place of today’s date. A shorter date format is
-used with only the date and the hours. The year and month are set to the
-current. The minutes are set to 00.
+Alternatively, use `td` in place of today’s date. The year and month are set
+to the current. The minutes are set to 00. You aren’t required to specify a
+to-date when adding an event.
 
-You aren’t required to specify a to-date when adding an event.
-
-    ~ $ f watch movie,td19
+    $ f watch movie,td19
        0       today 11:00  eat lunch
-		     11:30
+                     11:30
        1       today 19:00  watch movie
 
 ### Adding a to-do
 
 A to-do is like an event, but without any dates. A to-do is prefixed with a `t`.
+This can be useful when grep’ing flo’s output.
 
-    ~ $ f clean apartment
+    $ f clean apartment
        0       today 11:00  eat lunch
-		     11:30
+                     11:30
        1       today 19:00  watch movie
     t  2  clean apartment
 
@@ -50,9 +50,9 @@ An event with only a to-date is a deadline. When using a short format and the
 date is less than the date of today, flo assumes that it belongs to the next
 month.
 
-    ~ $ f deliver assignment-04
+    $ f deliver assignment-04
        0       today 11:00  eat lunch
-		     11:30
+                     11:30
        1       today 19:00  watch movie
     d  2  2010-09-04 00:00  deliver assignment
     t  3  clean apartment
@@ -60,10 +60,8 @@ month.
 ### Tagging an item
 
 An item might be tagged. A tag starts with ‘.’ and does not contain spaces.
-`2` is the current id of the item. This number is used when changing or
-removing items.
 
-    ~ $ f .work meeting,tm14
+    $ f .work meeting,tm14
        0       today 11:00  eat lunch
 		     11:30
        1       today 19:00  watch movie
@@ -76,7 +74,7 @@ removing items.
 It’s possible to change the `T` – tag, `w` – what, `f` – from-date, and
 `t` – to-date of an item.
 
-    ~ $ f -c 2 -f tm15
+    $ f -c 2 -f tm15
        0       today 11:00  eat lunch
 		     11:30
        1       today 19:00  watch movie
@@ -87,7 +85,7 @@ It’s possible to change the `T` – tag, `w` – what, `f` – from-date, and
 I recommend using short tags such as ‘w’ for work, ‘u’ for university,
 ‘b’ for things to buy etc.
 
-    ~ $ f -c 2 -T w
+    $ f -c 2 -T w
        0       today 11:00  eat lunch
 		     11:30
        1       today 19:00  watch movie
@@ -97,16 +95,17 @@ I recommend using short tags such as ‘w’ for work, ‘u’ for university,
 
 ### Looking up tagged items
 
-Looking up items belonging to a tag then becomes fast.
+Looking up items belonging to a tag then becomes fast. The looked up tag is not
+printed in the list.
 
-    ~ $ f .w
+    $ f .w
        2    tomorrow 15:00  meeting
 
 ### Removing items
 
 After eating your lunch, you might want to remove it.
 
-    ~ $ f -r 0
+    $ f -r 0
        0       today 19:00  watch movie
        1    tomorrow 15:00  .w meeting
     d  2  2010-09-04 00:00  deliver assignment
