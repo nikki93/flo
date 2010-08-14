@@ -1,6 +1,6 @@
 # flo
 
-flo is a command line application that keeps you in check. It’s small and fast.
+A minimalistic command line app for organizing events, to-dos, and deadlines.
 
 ## Installation
 
