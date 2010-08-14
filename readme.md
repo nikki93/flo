@@ -23,9 +23,8 @@ To add an event, specify what to do, the from- and the to-date.
        0       today 11:00  eat lunch
                      11:30
 
-Alternatively, use `td` in place of today’s date. The year and month are set to
-the current. The minutes are set to 00. You aren’t required to specify a to-date
-when adding an event.
+Alternatively, use `td` in place of today’s date. You aren’t required to specify
+a to-date when adding an event.
 
     $ f watch movie,td19
        0       today 11:00  eat lunch
@@ -35,7 +34,7 @@ when adding an event.
 ### Add a to-do
 
 A to-do is like an event, but without any dates. A to-do is prefixed with a `t`.
-This can be useful when grep’ing flo’s output.
+This can be useful when grepping flo’s output.
 
     $ f clean apartment
        0       today 11:00  eat lunch
@@ -74,7 +73,7 @@ It’s possible to change the `T` – tag, `w` – what, `f` – from-date, and 
 to-date of an item. For all fields except `w`, the value  `r` removes the
 field.
 
-`2` is the current id of the “meeting” event. This id is used when changing or
+`2` is the current id of the “meeting” event. The id is used when changing or
 removing items.
 
     $ f -c 2 -f tm15
