@@ -89,7 +89,7 @@ than the date of today, flo assumes that it belongs to the next month.
        0       today 11:00  eat lunch
                      11:30
        1       today 19:00  watch movie
-    d  2       09-04 00:00  deliver assignment
+    d  2  2010-09-04 00:00  deliver assignment
     t  3  clean apartment
 
 ### Add a tagged event
@@ -102,7 +102,7 @@ such as ‘w’ for work, ‘u’ for university, ‘b’ for things to buy etc.
                      11:30
        1       today 19:00  watch movie
        2    tomorrow 14:00  .w meeting
-    d  2       09-04 00:00  deliver assignment
+    d  2  2010-09-04 00:00  deliver assignment
     t  4  clean apartment
 
 ### Look up tagged items
@@ -126,7 +126,7 @@ removing items.
                      11:30
        1       today 19:00  watch movie
        2    tomorrow 15:00  .w meeting
-    d  2       09-04 00:00  deliver assignment
+    d  2  2010-09-04 00:00  deliver assignment
     t  4  clean apartment
 
 ### Remove an item
@@ -136,7 +136,7 @@ After eating your lunch, you might want to remove the event.
     $ flo -r 0
        0       today 19:00  watch movie
        1    tomorrow 15:00  .w meeting
-    d  2       09-04 00:00  deliver assignment
+    d  2  2010-09-04 00:00  deliver assignment
     t  3  clean apartment
 
 ## Aliases
