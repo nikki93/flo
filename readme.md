@@ -7,6 +7,49 @@ A command line app for organizing events, to-dos, and deadlines.
     make
     cp flo /usr/local/bin/
 
+## Usage
+
+List items
+
+    flo
+
+List items of a tag
+
+    flo .tag
+
+Add item
+
+    flo [.tag] what[,from][-to]
+
+    flo [-T tag] -w what [-f from | -t to]
+
+Change item
+
+    flo -c id -T tag | -w what | -f from | -t to
+
+    For fields other than `-w what`, value set to `r` removes the field.
+
+Remove item
+
+    flo -r id
+
+### Date formats
+
+    YYMMDDhhmm
+      MMDDhhmm
+        DDhhmm
+        DDhh
+        DD
+
+If the year or the month isn’t specified, the current year and month is used.
+For formats without a month, if the date specified is before today’s date, the
+month is set to the next month.
+
+`td`, `tm`, or `+n` can be used in place of `DD`, where `td` is today, `tm` is
+tomorrow, and `+n` sets the date `n` days from today.
+
+The value for hours and minutes is set to `00` if no other value is specified.
+
 ## Getting started
 
 ### Add an event
@@ -98,51 +141,6 @@ After eating your lunch, you might want to remove the event.
        1    tomorrow 15:00  .w meeting
     d  2       09-04 00:00  deliver assignment
     t  3  clean apartment
-
-## Usage
-
-List items
-
-    flo
-
-List items of a tag
-
-    flo .tag
-
-Add item
-
-    flo [.tag] what[,from][-to]
-
-    flo [-T tag] -w what [-f from | -t to]
-
-Change item
-
-    flo -c id -T tag | -w what | -f from | -t to
-
-    For fields other than `-w what`, value set to `r` removes the field.
-
-Remove item
-
-    flo -r id
-
-### Date formats
-
-    YYMMDDhhmm
-      MMDDhhmm
-        DDhhmm
-        DDhh
-        DD
-
-If the year or the month isn’t specified, the current year and month is used.
-For formats without a month, if the date specified is before today’s date, the
-month is set to the next month.
-
-`td`, `tm`, or `+n` can be used in place of `DD`, where `td` is today, `tm` is
-tomorrow, and `+n` sets the date `n` days from today.
-
-The value for hours and minutes is set to `00` if no other value is specified.
-
-When changing an existing item, setting a date to `r` removes the date.
 
 ## Aliases
 
