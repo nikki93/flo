@@ -71,8 +71,8 @@ a to-date when adding an event.
 
 ### Add a to-do
 
-A to-do is like an event, but without any dates. A to-do is prefixed with a `t`.
-This can be useful when grepping flo’s output.
+A to-do does not have any dates. flo lists to-dos with `t` at the start of the
+line. This is useful when grepping flo’s output.
 
     $ flo clean apartment
        0       today 11:00  eat lunch
@@ -82,9 +82,8 @@ This can be useful when grepping flo’s output.
 
 ### Add a deadline
 
-An event with only a to-date is a deadline. When using a short format and the
-date is less than the date of today, flo assumes that it belongs to the next
-month.
+A deadline only has a to-date. When using a short format and the date is less
+than the date of today, flo assumes that it belongs to the next month.
 
     $ flo deliver assignment-04
        0       today 11:00  eat lunch
@@ -95,9 +94,8 @@ month.
 
 ### Add a tagged event
 
-An item might be tagged. A tag starts with ‘.’ and does not contain spaces.
-I recommend using short tags such as ‘w’ for work, ‘u’ for university, ‘b’ for
-things to buy etc.
+A tag starts with ‘.’ and does not contain spaces.  I recommend using short tags
+such as ‘w’ for work, ‘u’ for university, ‘b’ for things to buy etc.
 
     $ flo .w meeting,tm14
        0       today 11:00  eat lunch
@@ -109,8 +107,7 @@ things to buy etc.
 
 ### Look up tagged items
 
-Looking up items belonging to a tag then becomes fast. The tag is not printed
-in the listing.
+The tag is not printed in the listing.
 
     $ flo .w
        2    tomorrow 15:00  meeting
