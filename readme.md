@@ -50,7 +50,7 @@ tomorrow, and `+n` sets the date `n` days from today.
 
 The value for hours and minutes is set to `00` if no other value is specified.
 
-## Getting started
+## Introduction
 
 ### Add an event
 
