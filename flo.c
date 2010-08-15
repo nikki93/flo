@@ -361,7 +361,11 @@ static void format_date(char *s, const time_t t1, const time_t t2) {
 		memcpy(&tm2, tm, sizeof(struct tm));
 
 		if (ARE_DATES_EQUAL(&tm2, &tm1)) {
-			strftime(s, DATE_FORMAT_LENGTH, "         %H:%M", &tm1);
+			strftime(
+				s,
+				DATE_FORMAT_LENGTH,
+				DATE_FORMAT_DUPLICATE,
+				&tm1);
 
 			return;
 		}
