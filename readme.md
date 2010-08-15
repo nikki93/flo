@@ -9,6 +9,12 @@ A command line app for organizing events, to-dos, and deadlines.
 
 ## Usage
 
+### Add item
+
+    flo [.tag] what[,from][-to]
+
+    flo [-T tag] -w what [-f from | -t to]
+
 ### List items
 
     flo
@@ -17,21 +23,15 @@ A command line app for organizing events, to-dos, and deadlines.
 
     flo .tag
 
-### Add item
+### Remove item
 
-    flo [.tag] what[,from][-to]
-
-    flo [-T tag] -w what [-f from | -t to]
+    flo -r id
 
 ### Change item
 
 For fields other than `-w what`, value set to `r` removes the field.
 
     flo -c id -T tag | -w what | -f from | -t to
-
-### Remove item
-
-    flo -r id
 
 ### Date formats
 
