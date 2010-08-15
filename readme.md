@@ -58,16 +58,16 @@ To add an event, specify what to do, the from-, and the to-date. Today’s date
 is `2010-08-05` in these examples.
 
     $ flo eat lunch,051100-051130
-       0       today 11:00  eat lunch
-                     11:30
+       0     today 11:00  eat lunch
+                   11:30
 
 Alternatively, use `td` in place of today’s date. It’s not required to specify
 a to-date when adding an event.
 
     $ flo watch movie,td19
-       0       today 11:00  eat lunch
-                     11:30
-       1       today 19:00  watch movie
+       0     today 11:00  eat lunch
+                   11:30
+       1     today 19:00  watch movie
 
 ### Add a to-do
 
@@ -75,9 +75,9 @@ A to-do does not have any dates. flo lists to-dos with `t` at the start of the
 line. This is useful when grepping flo’s output.
 
     $ flo clean apartment
-       0       today 11:00  eat lunch
-                     11:30
-       1       today 19:00  watch movie
+       0     today 11:00  eat lunch
+                   11:30
+       1     today 19:00  watch movie
     t  2  clean apartment
 
 ### Add a deadline
@@ -86,10 +86,10 @@ A deadline only has a to-date. When using a short format and the date is less
 than the date of today, flo assumes that it belongs to the next month.
 
     $ flo deliver assignment-04
-       0       today 11:00  eat lunch
-                     11:30
-       1       today 19:00  watch movie
-    d  2  2010-09-04 00:00  deliver assignment
+       0     today 11:00  eat lunch
+                   11:30
+       1     today 19:00  watch movie
+    d  2     09-04 00:00  deliver assignment
     t  3  clean apartment
 
 ### Add a tagged event
@@ -98,11 +98,11 @@ A tag starts with ‘.’ and does not contain spaces.  I recommend using short 
 such as ‘w’ for work, ‘u’ for university, ‘b’ for things to buy etc.
 
     $ flo .w meeting,tm14
-       0       today 11:00  eat lunch
-                     11:30
-       1       today 19:00  watch movie
-       2    tomorrow 14:00  .w meeting
-    d  2  2010-09-04 00:00  deliver assignment
+       0     today 11:00  eat lunch
+                   11:30
+       1     today 19:00  watch movie
+       2  tomorrow 14:00  .w meeting
+    d  2     09-04 00:00  deliver assignment
     t  4  clean apartment
 
 ### Look up tagged items
@@ -110,7 +110,7 @@ such as ‘w’ for work, ‘u’ for university, ‘b’ for things to buy etc.
 The tag is not printed in the listing.
 
     $ flo .w
-       2    tomorrow 15:00  meeting
+       2  tomorrow 15:00  meeting
 
 ### Change an item
 
@@ -122,11 +122,11 @@ field.
 removing items.
 
     $ flo -c 2 -f tm15
-       0       today 11:00  eat lunch
-                     11:30
-       1       today 19:00  watch movie
-       2    tomorrow 15:00  .w meeting
-    d  2  2010-09-04 00:00  deliver assignment
+       0     today 11:00  eat lunch
+                   11:30
+       1     today 19:00  watch movie
+       2  tomorrow 15:00  .w meeting
+    d  2     09-04 00:00  deliver assignment
     t  4  clean apartment
 
 ### Remove an item
@@ -134,9 +134,9 @@ removing items.
 After eating your lunch, you might want to remove the event.
 
     $ flo -r 0
-       0       today 19:00  watch movie
-       1    tomorrow 15:00  .w meeting
-    d  2  2010-09-04 00:00  deliver assignment
+       0     today 19:00  watch movie
+       1  tomorrow 15:00  .w meeting
+    d  2     09-04 00:00  deliver assignment
     t  3  clean apartment
 
 ## Aliases
