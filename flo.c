@@ -357,22 +357,22 @@ static void format_date(char *s, const time_t t1, const time_t t2) {
 		memcpy(&tm2, tm, sizeof(struct tm));
 
 		if (ARE_DATES_EQUAL(&tm2, &tm1)) {
-			strftime(s, 17, "           %H:%M", &tm1);
+			strftime(s, DATE_FORMAT_LENGTH, "         %H:%M", &tm1);
 
 			return;
 		}
 	}
 
 	if (is_today(&tm1))
-		strftime(s, 17, "     today %H:%M", &tm1);
+		strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT_TODAY, &tm1);
 	else if (is_tomorrow(&tm1))
-		strftime(s, 17, "  tomorrow %H:%M", &tm1);
+		strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT_TOMORROW, &tm1);
 	else
-		strftime(s, 17, "%Y-%m-%d %H:%M", &tm1);
+		strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT, &tm1);
 }
 
 static void print_items(const struct item *items, const size_t n, const char *tag) {
-	char s[17];
+	char s[DATE_FORMAT_LENGTH];
 	unsigned int i;
 	struct item *it;
 
