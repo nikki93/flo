@@ -144,8 +144,8 @@ When changing an existing item, setting a date to `r` removes the date.
 
 ## Items file
 
-Items are written to `$XDG_CONFIG_HOME/.flo`. Each item is stored on a separate
-line, and each field is separated by a tab.
+Items are written to `$HOME/.flo`. Each item is stored on a separate line, and
+each field is separated by a tab.
 
     what\tfrom\tto\ttag
 
