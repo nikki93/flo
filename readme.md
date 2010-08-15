@@ -7,9 +7,6 @@ A command line app for organizing events, to-dos, and deadlines.
     make
     cp flo /usr/local/bin/
 
-    # optional
-    echo "alias f='flo'" >> ~/.bashrc
-
 ## Getting started
 
 ### Add an event
@@ -17,14 +14,14 @@ A command line app for organizing events, to-dos, and deadlines.
 To add an event, specify what to do, the from-, and the to-date. Today’s date
 is `2010-08-05` in these examples.
 
-    $ f eat lunch,051100-051130
+    $ flo eat lunch,051100-051130
        0       today 11:00  eat lunch
                      11:30
 
 Alternatively, use `td` in place of today’s date. It’s not required to specify
 a to-date when adding an event.
 
-    $ f watch movie,td19
+    $ flo watch movie,td19
        0       today 11:00  eat lunch
                      11:30
        1       today 19:00  watch movie
@@ -34,7 +31,7 @@ a to-date when adding an event.
 A to-do is like an event, but without any dates. A to-do is prefixed with a `t`.
 This can be useful when grepping flo’s output.
 
-    $ f clean apartment
+    $ flo clean apartment
        0       today 11:00  eat lunch
                      11:30
        1       today 19:00  watch movie
@@ -46,11 +43,11 @@ An event with only a to-date is a deadline. When using a short format and the
 date is less than the date of today, flo assumes that it belongs to the next
 month.
 
-    $ f deliver assignment-04
+    $ flo deliver assignment-04
        0       today 11:00  eat lunch
                      11:30
        1       today 19:00  watch movie
-    d  2  2010-09-04 00:00  deliver assignment
+    d  2       09-04 00:00  deliver assignment
     t  3  clean apartment
 
 ### Add a tagged event
@@ -59,12 +56,12 @@ An item might be tagged. A tag starts with ‘.’ and does not contain spaces.
 I recommend using short tags such as ‘w’ for work, ‘u’ for university, ‘b’ for
 things to buy etc.
 
-    $ f .w meeting,tm14
+    $ flo .w meeting,tm14
        0       today 11:00  eat lunch
                      11:30
        1       today 19:00  watch movie
        2    tomorrow 14:00  .w meeting
-    d  2  2010-09-04 00:00  deliver assignment
+    d  2       09-04 00:00  deliver assignment
     t  4  clean apartment
 
 ### Look up tagged items
@@ -72,7 +69,7 @@ things to buy etc.
 Looking up items belonging to a tag then becomes fast. The tag is not printed
 in the listing.
 
-    $ f .w
+    $ flo .w
        2    tomorrow 15:00  meeting
 
 ### Change an item
@@ -84,27 +81,28 @@ field.
 `2` is the current id of the “meeting” event. The id is used when changing or
 removing items.
 
-    $ f -c 2 -f tm15
+    $ flo -c 2 -f tm15
        0       today 11:00  eat lunch
                      11:30
        1       today 19:00  watch movie
        2    tomorrow 15:00  .w meeting
-    d  2  2010-09-04 00:00  deliver assignment
+    d  2       09-04 00:00  deliver assignment
     t  4  clean apartment
 
 ### Remove an item
 
 After eating your lunch, you might want to remove the event.
 
-    $ f -r 0
+    $ flo -r 0
        0       today 19:00  watch movie
        1    tomorrow 15:00  .w meeting
-    d  2  2010-09-04 00:00  deliver assignment
+    d  2       09-04 00:00  deliver assignment
     t  3  clean apartment
 
 ## Usage
 
-    flo [.tag | what[,from][-to] || [-T tag] -w what [-f from | -t to] || -c id -T tag | -w what | -f from | -t to  || -r id]
+    flo [.tag | what[,from][-to] || [-T tag] -w what [-f from | -t to] || -c id
+-T tag | -w what | -f from | -t to  || -r id]
 
 ### Date formats
 
@@ -126,6 +124,8 @@ The value for hours and minutes is set to `00` if no other value is specified.
 When changing an existing item, setting a date to `r` removes the date.
 
 ## Aliases
+
+    alias f='flo'
 
     # events
     alias fe='flo | grep ^[^td]' 
