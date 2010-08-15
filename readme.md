@@ -35,11 +35,11 @@ For fields other than `-w what`, `r` as value removes the field.
 
 ### Date formats
 
-    YYMMDDhhmm
-      MMDDhhmm
-        DDhhmm
-        DDhh
-        DD
+    YYYYMMDDhhmm
+        MMDDhhmm
+          DDhhmm
+          DDhh
+          DD
 
 If the year or the month isn’t specified, the current year and month is used.
 For formats without a month, if the date specified is before today’s date, the
