@@ -101,7 +101,29 @@ After eating your lunch, you might want to remove the event.
 
 ## Usage
 
-    flo [.tag | what[,from][-to] || [-T tag] -w what [-f from | -t to] || -c id -T tag | -w what | -f from | -t to  || -r id]
+List items
+
+    flo
+
+List items of a tag
+
+    flo .tag
+
+Add item
+
+    flo [.tag] what[,from][-to]
+
+    flo [-T tag] -w what [-f from | -t to]
+
+Change item
+
+    flo -c id -T tag | -w what | -f from | -t to
+
+    For fields other than `-w what`, value set to `r` removes the field.
+
+Remove item
+
+    flo -r id
 
 ### Date formats
 
