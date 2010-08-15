@@ -738,7 +738,7 @@ Remove item\n\
     flo -r id\n\
 \n\
 Change item\n\
-    For fields other than “-w what”, value ‘r’ removes the field.\n\
+    For fields other than “-w what”, ‘r’ as value removes the field.\n\
 \n\
     flo -c id -T tag | -w what | -f from | -t to");
 }
