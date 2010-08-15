@@ -50,25 +50,6 @@ tomorrow, and `+n` sets the date `n` days from today.
 
 The value for hours and minutes is set to `00` if no other value is specified.
 
-## Aliases
-
-    alias f='flo'
-
-    # events
-    alias fe='flo | grep ^[^td]' 
-
-    # to-dos
-    alias ft='flo | grep ^t' 
-
-    # deadlines
-    alias fd='flo | grep ^d' 
-
-    # today’s events and deadlines
-    alias ftd='flo | grep today' 
-
-    # tomorrow’s events and deadlines
-    alias ftm='flo | grep tomorrow' 
-
 ## Items file
 
 Items are written to `$HOME/.flo`. Each item is stored on a separate line, and
