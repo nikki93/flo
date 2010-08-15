@@ -29,7 +29,7 @@ A command line app for organizing events, to-dos, and deadlines.
 
 ### Change item
 
-For fields other than `-w what`, value set to `r` removes the field.
+For fields other than `-w what`, value `r` removes the field.
 
     flo -c id -T tag | -w what | -f from | -t to
 

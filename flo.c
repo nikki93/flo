@@ -23,13 +23,14 @@ static void adjust_month(struct tm *tm, const char *s);
 static void format_date(char *s, const time_t t1, const time_t t2);
 static void free_items(struct item *items, const size_t n);
 static void line_to_item(struct item *it, char *line);
+static void print_help();
 static void print_items(const struct item *items, const size_t n, const char *tag);
 static void set_year_and_month(char *year, char *month, const struct tm *tm);
 
 int read_args(struct args *a, const int argc, char *argv[]) {
 	int c;
 
-	while ((c = getopt(argc, argv, "c:r:T:w:f:t:")) != -1) {
+	while ((c = getopt(argc, argv, "c:r:T:w:f:t:h")) != -1) {
 		switch ((char)c) {
 			case 'c':
 				a->change = 1;
@@ -64,6 +65,9 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 				a->to = malloc(strlen(optarg) + 1);
 				strcpy(a->to, optarg);
 				break;
+			case 'h':
+				print_help();
+				exit(EXIT_SUCCESS);
 			case '?':
 				return 0;
 		}
@@ -705,15 +709,36 @@ static int last_index_of(const char *s, const char c) {
 	return -1;
 }
 
-void fail(struct args *a, const char *e, const int print_usage) {
+void fail(struct args *a, const char *e, const int print_help_hint) {
 	if (e != NULL)
 		puts(e);
 
-	if (print_usage)
-		puts("Usage: flo [.tag | what[,from][-to] || [-T tag] -w what [\
--f from | -t to] || -c id -T tag | -w what | -f from | -t to  || -r id]");
+	if (print_help_hint) {
+		puts("Try “flo -h” for more information.");
+	}
 
 	free_args(a);
 
 	exit(EXIT_FAILURE);
+}
+
+static void print_help() {
+	puts("Add item\n\
+    flo [.tag] what[,from][-to]\n\
+\n\
+    flo [-T tag] -w what [-f from | -t to]\n\
+\n\
+List items\n\
+    flo\n\
+\n\
+List items of a tag\n\
+    flo .tag\n\
+\n\
+Remove item\n\
+    flo -r id\n\
+\n\
+Change item\n\
+    For fields other than “-w what”, value ‘r’ removes the field.\n\
+\n\
+    flo -c id -T tag | -w what | -f from | -t to");
 }
