@@ -101,8 +101,7 @@ After eating your lunch, you might want to remove the event.
 
 ## Usage
 
-    flo [.tag | what[,from][-to] || [-T tag] -w what [-f from | -t to] || -c id
--T tag | -w what | -f from | -t to  || -r id]
+    flo [.tag | what[,from][-to] || [-T tag] -w what [-f from | -t to] || -c id -T tag | -w what | -f from | -t to  || -r id]
 
 ### Date formats
 
