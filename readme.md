@@ -1,6 +1,6 @@
 # flo
 
-A command line app for organizing events, to-dos, and deadlines.
+Organize events, to-dos, and deadlines.
 
 ## Installation
 
@@ -45,8 +45,8 @@ If the year or the month isn’t specified, the current year and month is used.
 For formats without a month, if the date specified is before today’s date, the
 month is set to the next month.
 
-`td`, `tm`, or `+n` can be used in place of `DD`, where `td` is today, `tm` is
-tomorrow, and `+n` sets the date `n` days from today.
+`td`, `tm`, and `+n` can be used in place of `DD`. `td` is today, `tm` is
+tomorrow, and `+n` is `n` days from today.
 
 The value for hours and minutes is set to `00` if no other value is specified.
 
