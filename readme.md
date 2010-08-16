@@ -22,7 +22,7 @@ Organize events, to-dos, and deadlines.
 
     flo [.tag] what[,from][-to]
 
-    flo -w what [-f from | -t to] [-T tag]
+    flo [-T tag] -w what [-f from | -t to]
 
 ### List items
 
@@ -40,7 +40,7 @@ Organize events, to-dos, and deadlines.
 
 For fields other than `-w what`, `r` as value removes the field.
 
-    flo -c id -w what | -f from | -t to | -T tag
+    flo -c id -T tag | -w what | -f from | -t to
 
 ### Date formats
 

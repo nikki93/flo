@@ -721,7 +721,7 @@ static void print_help() {
 	puts("Add item\n\
     flo [.tag] what[,from][-to]\n\
 \n\
-    flo -w what [-f from | -t to] [-T tag]\n\
+    flo [-T tag] -w what [-f from | -t to]\n\
 \n\
 List items\n\
     flo\n\
@@ -735,7 +735,7 @@ Remove item\n\
 Change item\n\
     For fields other than -w what, r as value removes the field.\n\
 \n\
-    flo -c id -w what | -f from | -t to | -T tag");
+    flo -c id -T tag | -w what | -f from | -t to");
 	puts("\n\
 Date formats\n\
     YYYYMMDDhhmm\n\
