@@ -338,9 +338,8 @@ static void print_items(const struct item *items, const size_t n) {
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
 
-		if (IS_TODO(it)) {
+		if (IS_TODO(it))
 			printf("t% 3d  %s\n", i, it->what);
-		}
 		else if (IS_DEADLINE(it)) {
 			d = date_diff(it->to, time(NULL));
 			format_date(s, it->to, 0);
@@ -437,9 +436,8 @@ static int sort_items(const void *a, const void *b) {
 static void free_items(struct item *items, const size_t n) {
 	unsigned int i;
 
-	for (i = 0; i < n; i++) {
+	for (i = 0; i < n; i++)
 		free(items[i].what);
-	}
 
 	free(items);
 }
@@ -546,9 +544,8 @@ static int complete_date(char *s1, const char *s2) {
 
 	strcat(s1, s2);
 
-	if (day[0] != '\0') {
+	if (day[0] != '\0')
 		memcpy(s1 + 6, day, 2);
-	}
 
 	switch (strlen(s2)) {
 		case 2:
@@ -621,9 +618,8 @@ void fail(struct args *a, const char *e, const int print_help_hint) {
 	if (e != NULL)
 		puts(e);
 
-	if (print_help_hint) {
+	if (print_help_hint)
 		puts("Try “flo -h” for more information.");
-	}
 
 	free_args(a);
 
