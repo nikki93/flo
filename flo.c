@@ -410,9 +410,9 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 			format_date(s, it->to, 0);
 
 			if (d >= 0 && d < 10)
-				printf("d% 3d  d%d  %s  ", i, d, s);
+				printf("d% 3d  %s  d%d  ", i, s, d);
 			else
-				printf("d% 3d      %s  ", i, s);
+				printf("d% 3d  %s      ", i, s);
 
 			if (it->tag != NULL && tag == NULL)
 				printf(".%s ", it->tag);
@@ -424,9 +424,9 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 			format_date(s, it->from, 0);
 
 			if (d >= 0 && d < 10)
-				printf("% 4d  d%d  %s  ", i, d, s);
+				printf("% 4d  %s  d%d  ", i, s, d);
 			else
-				printf("% 4d      %s  ", i, s);
+				printf("% 4d  %s      ", i, s);
 
 			if (it->tag != NULL && tag == NULL)
 				printf(".%s ", it->tag);
@@ -438,9 +438,9 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 				format_date(s, it->to, it->from);
 
 				if (d >= 0 && d < 10)
-					printf("      d%d  %s\n", d, s);
+					printf("      %s  d%d\n", s, d);
 				else
-					printf("          %s\n", s);
+					printf("      %s    \n", s);
 			}
 		}
 	}
