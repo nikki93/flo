@@ -638,7 +638,7 @@ Remove item\n\
     flo -r id\n\
 \n\
 Change item\n\
-    For `-f from` and `-t to`, `r` as value removes the field.\n\
+    For -f from and -t to, r as value removes the field.\n\
 \n\
     flo -c id -w what | -f from | -t to");
 	puts("\n\
