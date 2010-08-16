@@ -14,8 +14,10 @@
 #define ITEM_COUNT 128
 #define LINE_LENGTH 1024
 
-#define ARE_DATES_EQUAL(tm1, tm2) (((tm1)->tm_year == (tm2)->tm_year && \
-(tm1)->tm_mon == (tm2)->tm_mon) && (tm1)->tm_mday == (tm2)->tm_mday)
+#define ARE_DATES_EQUAL(tm1, tm2) \
+	(((tm1)->tm_year == (tm2)->tm_year && \
+	(tm1)->tm_mon == (tm2)->tm_mon) && \
+	(tm1)->tm_mday == (tm2)->tm_mday)
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
 #define IS_TODO(it) (it->from == 0 && it->to == 0)
 
