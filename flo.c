@@ -309,9 +309,6 @@ static void format_date(char *s, const time_t t1, const time_t t2) {
 static int date_diff(time_t t1, time_t t2) {
 	struct tm *tm, tm1, tm2;
 
-	memset(&tm1, 0, sizeof(struct tm));
-	memset(&tm2, 0, sizeof(struct tm));
-
 	tm = localtime(&t1);
 	memcpy(&tm1, tm, sizeof(struct tm));
 
