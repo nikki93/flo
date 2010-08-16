@@ -49,14 +49,14 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 				a->flag = ARGS_REMOVE;
 
 				if (!sscanf(optarg, "%u", &a->id))
-					fail(a, "Invalid id", 1);
+					fail(a, "The id is not a valid number.", 0);
 
 				break;
 			case 'c':
 				a->flag = ARGS_CHANGE;
 
 				if (!sscanf(optarg, "%u", &a->id))
-					fail(a, "Invalid id", 1);
+					fail(a, "The id is not a valid number.", 0);
 
 				break;
 			case 'h':
