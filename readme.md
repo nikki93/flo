@@ -18,34 +18,17 @@ Organize events, to-dos, and deadlines.
 
 ## Usage
 
-### Add item
+    flo what[,from][-to]                   Add item
+    flo -w what [-f from | -t to]          Add item
+    flo                                    List items
+    flo -r id                              Remove item
+    flo -c -w what | -f from | -t to       Change item
 
-    flo what[,from][-to]
-
-    flo -w what [-f from | -t to]
-
-### List items
-
-    flo
-
-### Remove item
-
-    flo -r id
-
-### Change item
-
-For `-f from` and `-t to`, `r` as value removes the field.
-
-    flo -c -w what | -f from | -t to
+When changing an item, setting -f or -t to r removes the field.
 
 ### Date formats
 
-    YYYYMMDDhhmm
-        MMDDhhmm
-          DDhhmm
-          DDhh
-          DD
-
+YYYYMMDDhhmm, MMDDhhmm, DDhhmm, DDhh, and DD are the supported date formats.
 Replace `DD` with `dn` to set the date `n` days from today’s date.
 
 If the year or the month isn’t specified, the current year and month is used.

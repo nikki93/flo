@@ -631,36 +631,21 @@ void fail(struct args *a, const char *e, const int print_help_hint) {
 }
 
 static void print_help() {
-	puts("Add item\n\
-    flo what[,from][-to]\n\
+	puts("flo what[,from][-to]                   Add item\n\
+flo -w what [-f from | -t to]          Add item\n\
+flo                                    List items\n\
+flo -r id                              Remove item\n\
+flo -c -w what | -f from | -t to       Change item\n\
 \n\
-    flo -w what [-f from | -t to]\n\
+When changing an item, setting -f or -t to r removes the field.\n");
+puts("YYYYMMDDhhmm, MMDDhhmm, DDhhmm, DDhh, and DD are the supported date formats.\n\
+Replace `DD` with `dn` to set the date `n` days from today’s date.\n\
 \n\
-List items\n\
-    flo\n\
+If the year or the month isn’t specified, the current year and month is used.\n\
+For formats without a month, if the date specified is before today’s date, the\n\
+month is set to the next month.\n\
 \n\
-Remove item\n\
-    flo -r id\n\
-\n\
-Change item\n\
-    For -f from and -t to, r as value removes the field.\n\
-\n\
-    flo -c id -w what | -f from | -t to");
-	puts("\n\
-Date formats\n\
-    YYYYMMDDhhmm\n\
-        MMDDhhmm\n\
-          DDhhmm\n\
-          DDhh\n\
-          DD\n\
-\n\
-    Replace DD with dn to set the date n days from today’s date.\n\
-\n\
-    If the year or the month isn’t specified, the current year and month is\n\
-    used. For formats without a month, if the date specified is before today’s\n\
-    date, the month is set to the next month.\n\
-\n\
-    The value for hours and minutes is set to 00 if no other value is specified.");
+The value for hours and minutes is set to 00 if no other value is specified.");
 }
 
 int main(int argc, char *argv[]) {
