@@ -596,7 +596,7 @@ static int complete_date(char *s1, const char *s2) {
 		case 2:
 		case 4:
 		case 6:
-			if (s2[0] == 't') {
+			if (s2[0] == 'd') {
 				t += ctoi(s2[1]) * 86400;
 				tm = localtime(&t);
 				sprintf(day, "%02d", (int)tm->tm_mday);
@@ -748,7 +748,7 @@ Date formats\n\
     used. For formats without a month, if the date specified is before today’s\n\
     date, the month is set to the next month.\n\
 \n\
-    Replace DD with tn to set the date n days from today.\n\
+    Replace DD with dn to set the date n days from today’s date.\n\
 \n\
     The value for hours and minutes is set to 00 if no other value is specified.");
 }

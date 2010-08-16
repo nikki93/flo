@@ -9,9 +9,9 @@ Organize events, to-dos, and deadlines.
 
 ## Example
 
-    $ flo watch movie,t020
+    $ flo watch movie,d020
        0     today 20:00  watch movie
-    $ flo eat lunch,t11100-t11130
+    $ flo eat lunch,d11100-t11130
        0     today 20:00  watch movie
        1  tomorrow 11:00  eat lunch
                    11:30
@@ -54,7 +54,7 @@ If the year or the month isn’t specified, the current year and month is used.
 For formats without a month, if the date specified is before today’s date, the
 month is set to the next month.
 
-Replace `DD` with `tn` to set the date `n` days from today.
+Replace `DD` with `dn` to set the date `n` days from today’s date.
 
 The value for hours and minutes is set to `00` if no other value is specified.
 
