@@ -11,7 +11,7 @@
 #define DATE_FORMAT_DUPLICATE "      %H:%M"
 #define DATE_FORMAT_LENGTH 12
 #define GET_FILENAME(s)	sprintf(s, "%s/.flo", getenv("HOME"))
-#define ITEM_COUNT 128
+#define ITEM_COUNT 1024
 #define LINE_LENGTH 1024
 
 #define ARE_DATES_EQUAL(tm1, tm2) \
