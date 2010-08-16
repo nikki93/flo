@@ -21,7 +21,7 @@ static void free_items(struct item *items, const size_t n);
 static void line_to_item(struct item *it, char *line);
 static void print_help();
 static void print_items(const struct item *items, const size_t n);
-static void set_year_and_month(char *year, char *month, const struct tm *tm);
+static void get_year_and_month(char *year, char *month, const struct tm *tm);
 
 int read_args(struct args *a, const int argc, char *argv[]) {
 	int c;
@@ -529,13 +529,13 @@ static int complete_date(char *s1, const char *s2) {
 				adjust_month(tm, s2);
 			}
 
-			set_year_and_month(year, month, tm);
+			get_year_and_month(year, month, tm);
 			strcat(s1, year);
 			strcat(s1, month);
 			break;
 		case 8:
 			tm = localtime(&t);
-			set_year_and_month(year, month, tm);
+			get_year_and_month(year, month, tm);
 			strcat(s1, year);
 			break;
 		case 12:
@@ -602,7 +602,7 @@ static int ctoi(const char c) {
 	return strtol(s, NULL, 10);
 }
 
-static void set_year_and_month(char *year, char *month, const struct tm *tm) {
+static void get_year_and_month(char *year, char *month, const struct tm *tm) {
 	sprintf(year, "%d", 1900 + tm->tm_year);
 	sprintf(month, "%02d", tm->tm_mon + 1);
 }
