@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
 	int res;
 
 	if (argc < 2)
-		return list_items(NULL);
+		return list_items();
 	else {
 		memset(&a, 0, sizeof(struct args));
 
@@ -14,8 +14,6 @@ int main(int argc, char *argv[]) {
 
 			if (res == 0)
 				fail(&a, NULL, 1);
-			else if (res == 2)
-				return list_items(&a);
 
 			return add_item(&a);
 		}
@@ -23,12 +21,14 @@ int main(int argc, char *argv[]) {
 			if (read_args(&a, argc, argv) == 0)
 				fail(&a, NULL, 1);
 
-			if (a.change != 0)
-				return change_item(&a);
-			else if (a.remove != 0)
-				return remove_item(&a);
-			else
-				return add_item(&a);
+			switch (a.flag) {
+				case ARGS_REMOVE:
+					return remove_item(&a);
+				case ARGS_CHANGE:
+					return change_item(&a);
+				default:
+					return add_item(&a);
+			}
 		}
 	}
 }

@@ -18,6 +18,8 @@
 	(((tm1)->tm_year == (tm2)->tm_year && \
 	(tm1)->tm_mon == (tm2)->tm_mon) && \
 	(tm1)->tm_mday == (tm2)->tm_mday)
+#define ARGS_REMOVE 1
+#define ARGS_CHANGE 2
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
 #define IS_TODO(it) (it->from == 0 && it->to == 0)
 
@@ -25,8 +27,7 @@ struct args {
 	char *what;
 	char *from;
 	char *to;
-	int change;
-	int remove;
+	int flag;
 	unsigned int id;
 };
 
@@ -38,7 +39,7 @@ struct item {
 
 int add_item(struct args *a);
 int change_item(struct args *a);
-int list_items(struct args *a);
+int list_items();
 int read_args(struct args *a, const int argc, char *argv[]);
 int read_args_short(struct args *a, const int argc, char *argv[]);
 int remove_item(struct args *a);

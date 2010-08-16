@@ -24,18 +24,10 @@ static void print_items(const struct item *items, const size_t n);
 static void get_year_and_month(char *year, char *month, const struct tm *tm);
 
 int read_args(struct args *a, const int argc, char *argv[]) {
-	int c;
+	char c;
 
-	while ((c = getopt(argc, argv, "c:r:w:f:t:h")) != -1) {
-		switch ((char)c) {
-			case 'c':
-				a->change = 1;
-				a->id = strtol(optarg, NULL, 10);
-				break;
-			case 'r':
-				a->remove = 1;
-				a->id = strtol(optarg, NULL, 10);
-				break;
+	while ((c = getopt(argc, argv, "w:f:t:r:c:h")) != -1) {
+		switch (c) {
 			case 'w':
 				a->what = malloc(strlen(optarg) + 1);
 				strcpy(a->what, optarg);
@@ -47,6 +39,14 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 			case 't':
 				a->to = malloc(strlen(optarg) + 1);
 				strcpy(a->to, optarg);
+				break;
+			case 'r':
+				a->flag = ARGS_REMOVE;
+				a->id = strtol(optarg, NULL, 10);
+				break;
+			case 'c':
+				a->flag = ARGS_CHANGE;
+				a->id = strtol(optarg, NULL, 10);
 				break;
 			case 'h':
 				print_help();
@@ -108,19 +108,15 @@ void free_args(struct args *a) {
 	free(a->to);
 }
 
-int list_items(struct args *a) {
+int list_items() {
 	size_t n;
 	struct item *items;
 
-	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
 
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
 	print_items(items, n);
-
-	if (a != NULL)
-		free_args(a);
-
 	free_items(items, n);
 
 	return EXIT_SUCCESS;
@@ -146,7 +142,7 @@ int add_item(struct args *a) {
 
 	free_args(a);
 
-	return list_items(NULL);
+	return list_items();
 }
 
 int change_item(struct args *a) {
@@ -154,7 +150,7 @@ int change_item(struct args *a) {
 	struct item *it;
 	struct item *items;
 
-	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
 
 	n = read_items(items);
 
@@ -194,14 +190,14 @@ int change_item(struct args *a) {
 	free_args(a);
 	free_items(items, n);
 
-	return list_items(NULL);
+	return list_items();
 }
 
 int remove_item(struct args *a) {
 	size_t n;
 	struct item *items;
 
-	items = (struct item *)calloc(ITEM_COUNT, sizeof(struct item));
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
 
 	n = read_items(items);
 
@@ -217,7 +213,7 @@ int remove_item(struct args *a) {
 	free_args(a);
 	free_items(items, n);
 
-	return list_items(NULL);
+	return list_items();
 }
 
 static size_t read_items(struct item *items) {
