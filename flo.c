@@ -6,6 +6,7 @@ static int complete_date(char *s1, const char *s2);
 static int ctoi(const char c);
 static int date_diff(time_t t1, time_t t2);
 static int date_to_time(time_t *t, const char *s);
+static void fail(struct args *a, const char *e, const int print_help_hint);
 static int last_index_of(const char *s, const char c);
 static int list_items();
 static int parse_date(time_t *t, const char *s);
@@ -37,24 +38,27 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 	while ((c = getopt(argc, argv, "w:f:t:r:c:h")) != -1) {
 		switch (c) {
 			case 'w':
-				a->what = malloc(strlen(optarg) + 1);
-				strcpy(a->what, optarg);
+				a->what = strdup(optarg);
 				break;
 			case 'f':
-				a->from = malloc(strlen(optarg) + 1);
-				strcpy(a->from, optarg);
+				a->from = strdup(optarg);
 				break;
 			case 't':
-				a->to = malloc(strlen(optarg) + 1);
-				strcpy(a->to, optarg);
+				a->to = strdup(optarg);
 				break;
 			case 'r':
 				a->flag = ARGS_REMOVE;
-				a->id = strtol(optarg, NULL, 10);
+
+				if (!sscanf(optarg, "%u", &a->id))
+					fail(a, "Invalid id", 1);
+
 				break;
 			case 'c':
 				a->flag = ARGS_CHANGE;
-				a->id = strtol(optarg, NULL, 10);
+
+				if (!sscanf(optarg, "%u", &a->id))
+					fail(a, "Invalid id", 1);
+
 				break;
 			case 'h':
 				print_help();
@@ -174,8 +178,7 @@ static int change_item(struct args *a) {
 
 	if (a->what != NULL) {
 		free(it->what);
-		it->what = malloc(strlen(a->what) + 1);
-		strcpy(it->what, a->what);
+		it->what = strdup(a->what);
 	}
 
 	if (a->from != NULL) {
