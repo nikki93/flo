@@ -18,6 +18,7 @@
 	(((tm1)->tm_year == (tm2)->tm_year && \
 	(tm1)->tm_mon == (tm2)->tm_mon) && \
 	(tm1)->tm_mday == (tm2)->tm_mday)
+#define ARGS_ADD 0
 #define ARGS_REMOVE 1
 #define ARGS_CHANGE 2
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)

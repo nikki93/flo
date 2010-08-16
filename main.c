@@ -22,12 +22,12 @@ int main(int argc, char *argv[]) {
 				fail(&a, NULL, 1);
 
 			switch (a.flag) {
+				case ARGS_ADD:
+					return add_item(&a);
 				case ARGS_REMOVE:
 					return remove_item(&a);
-				case ARGS_CHANGE:
-					return change_item(&a);
 				default:
-					return add_item(&a);
+					return change_item(&a);
 			}
 		}
 	}
