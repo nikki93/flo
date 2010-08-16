@@ -46,11 +46,11 @@ For `-f from` and `-t to`, `r` as value removes the field.
           DDhh
           DD
 
+Replace `DD` with `dn` to set the date `n` days from today’s date.
+
 If the year or the month isn’t specified, the current year and month is used.
 For formats without a month, if the date specified is before today’s date, the
 month is set to the next month.
-
-Replace `DD` with `dn` to set the date `n` days from today’s date.
 
 The value for hours and minutes is set to `00` if no other value is specified.
 

@@ -649,11 +649,11 @@ Date formats\n\
           DDhh\n\
           DD\n\
 \n\
+    Replace DD with dn to set the date n days from today’s date.\n\
+\n\
     If the year or the month isn’t specified, the current year and month is\n\
     used. For formats without a month, if the date specified is before today’s\n\
     date, the month is set to the next month.\n\
-\n\
-    Replace DD with dn to set the date n days from today’s date.\n\
 \n\
     The value for hours and minutes is set to 00 if no other value is specified.");
 }
