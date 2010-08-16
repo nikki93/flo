@@ -37,12 +37,3 @@ struct item {
 	time_t from;
 	time_t to;
 };
-
-int add_item(struct args *a);
-int change_item(struct args *a);
-int list_items();
-int read_args(struct args *a, const int argc, char *argv[]);
-int read_args_short(struct args *a, const int argc, char *argv[]);
-int remove_item(struct args *a);
-void fail(struct args *a, const char *e, const int print_usage);
-void free_args(struct args *a);

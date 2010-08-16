@@ -1,11 +1,17 @@
 #include "flo.h"
 
+static int add_item(struct args *a);
+static int change_item(struct args *a);
 static int complete_date(char *s1, const char *s2);
 static int ctoi(const char c);
 static int date_diff(time_t t1, time_t t2);
 static int date_to_time(time_t *t, const char *s);
 static int last_index_of(const char *s, const char c);
+static int list_items();
 static int parse_date(time_t *t, const char *s);
+static int read_args(struct args *a, const int argc, char *argv[]);
+static int read_args_short(struct args *a, const int argc, char *argv[]);
+static int remove_item(struct args *a);
 static int sort_items(const void *a, const void *b);
 static int write_item(struct args *a, const time_t from, const time_t to);
 static int write_item_to_stream(
@@ -16,14 +22,16 @@ static int write_item_to_stream(
 static int write_items(const struct item *items, const size_t n, unsigned int except);
 static size_t read_items(struct item *items);
 static void adjust_month(struct tm *tm, const char *s);
+static void fail(struct args *a, const char *e, const int print_usage);
 static void format_date(char *s, const time_t t1, const time_t t2);
+static void free_args(struct args *a);
 static void free_items(struct item *items, const size_t n);
+static void get_year_and_month(char *year, char *month, const struct tm *tm);
 static void line_to_item(struct item *it, char *line);
 static void print_help();
 static void print_items(const struct item *items, const size_t n);
-static void get_year_and_month(char *year, char *month, const struct tm *tm);
 
-int read_args(struct args *a, const int argc, char *argv[]) {
+static int read_args(struct args *a, const int argc, char *argv[]) {
 	char c;
 
 	while ((c = getopt(argc, argv, "w:f:t:r:c:h")) != -1) {
@@ -59,7 +67,7 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 	return 1;
 }
 
-int read_args_short(struct args *a, const int argc, char *argv[]) {
+static int read_args_short(struct args *a, const int argc, char *argv[]) {
 	char line[LINE_LENGTH];
 	char *rest = &line[0];
 	int i;
@@ -108,7 +116,7 @@ void free_args(struct args *a) {
 	free(a->to);
 }
 
-int list_items() {
+static int list_items() {
 	size_t n;
 	struct item *items;
 
@@ -122,7 +130,7 @@ int list_items() {
 	return EXIT_SUCCESS;
 }
 
-int add_item(struct args *a) {
+static int add_item(struct args *a) {
 	time_t from = 0;
 	time_t to = 0;
 
@@ -145,7 +153,7 @@ int add_item(struct args *a) {
 	return list_items();
 }
 
-int change_item(struct args *a) {
+static int change_item(struct args *a) {
 	size_t n;
 	struct item *it;
 	struct item *items;
@@ -193,7 +201,7 @@ int change_item(struct args *a) {
 	return list_items();
 }
 
-int remove_item(struct args *a) {
+static int remove_item(struct args *a) {
 	size_t n;
 	struct item *items;
 
@@ -650,4 +658,37 @@ Date formats\n\
     date, the month is set to the next month.\n\
 \n\
     The value for hours and minutes is set to 00 if no other value is specified.");
+}
+
+int main(int argc, char *argv[]) {
+	struct args a;
+	int res;
+
+	if (argc < 2)
+		return list_items();
+	else {
+		memset(&a, 0, sizeof(struct args));
+
+		if (argv[1][0] != '-') {
+			res = read_args_short(&a, argc, argv);
+
+			if (res == 0)
+				fail(&a, NULL, 1);
+
+			return add_item(&a);
+		}
+		else {
+			if (read_args(&a, argc, argv) == 0)
+				fail(&a, NULL, 1);
+
+			switch (a.flag) {
+				case ARGS_ADD:
+					return add_item(&a);
+				case ARGS_REMOVE:
+					return remove_item(&a);
+				default:
+					return change_item(&a);
+			}
+		}
+	}
 }
