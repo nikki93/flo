@@ -49,14 +49,14 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 				a->flag = ARGS_REMOVE;
 
 				if (!sscanf(optarg, "%u", &a->id))
-					fail(a, "The id is not a valid number.", 0);
+					fail(a, "Id is not valid.", 0);
 
 				break;
 			case 'c':
 				a->flag = ARGS_CHANGE;
 
 				if (!sscanf(optarg, "%u", &a->id))
-					fail(a, "The id is not a valid number.", 0);
+					fail(a, "Id is not valid.", 0);
 
 				break;
 			case 'h':
@@ -153,7 +153,9 @@ static int add_item(struct args *a) {
 
 	free_args(a);
 
-	return list_items();
+	puts("Ids are updated.");
+
+	return EXIT_SUCCESS;
 }
 
 static int change_item(struct args *a) {
@@ -200,7 +202,9 @@ static int change_item(struct args *a) {
 	free_args(a);
 	free_items(items, n);
 
-	return list_items();
+	puts("Ids might have been updated.");
+
+	return EXIT_SUCCESS;
 }
 
 static int remove_item(struct args *a) {
@@ -223,7 +227,9 @@ static int remove_item(struct args *a) {
 	free_args(a);
 	free_items(items, n);
 
-	return list_items();
+	puts("Ids are updated.");
+
+	return EXIT_SUCCESS;
 }
 
 static size_t read_items(struct item *items) {
