@@ -28,7 +28,7 @@ When changing an item, setting `-f` or `-t` to `r` removes the field.
 
 ### Date formats
 
-`YYYYMMDDhhmm`, `MMDDhhmm`, `DDhhmm`, `DDhh`, and `DD` are the supported date
+`YYYYMMDDhhmm`, `MMDDhhmm`, `DDhhmm`, `DDhh`, and `DD` are the valid date
 formats. Replace `DD` with `dn` to set the date `n` days from today’s date.
 
 If the year or the month isn’t specified, the current year and month is used.
