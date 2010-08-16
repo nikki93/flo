@@ -346,7 +346,12 @@ static void print_items(const struct item *items, const size_t n) {
 			format_date(s, it->to, 0);
 
 			if (d >= 0 && d < 10)
-				printf("d% 3d  %s  d%d  %s\n", i, s, d, it->what);
+				printf(
+					"d% 3d  %s  d%d  %s\n",
+					i,
+					s,
+					d,
+					it->what);
 			else
 				printf("d% 3d  %s      %s\n", i, s, it->what);
 		}
@@ -355,7 +360,12 @@ static void print_items(const struct item *items, const size_t n) {
 			format_date(s, it->from, 0);
 
 			if (d >= 0 && d < 10)
-				printf("% 4d  %s  d%d  %s\n", i, s, d, it->what);
+				printf(
+					"% 4d  %s  d%d  %s\n",
+					i,
+					s,
+					d,
+					it->what);
 			else
 				printf("% 4d  %s      %s\n", i, s, it->what);
 
