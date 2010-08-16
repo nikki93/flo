@@ -639,7 +639,7 @@ flo -c -w what | -f from | -t to       Change item\n\
 \n\
 When changing an item, setting -f or -t to r removes the field.\n");
 puts("YYYYMMDDhhmm, MMDDhhmm, DDhhmm, DDhh, and DD are the supported date formats.\n\
-Replace `DD` with `dn` to set the date `n` days from today’s date.\n\
+Replace DD with dn to set the date n days from today’s date.\n\
 \n\
 If the year or the month isn’t specified, the current year and month is used.\n\
 For formats without a month, if the date specified is before today’s date, the\n\
