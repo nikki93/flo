@@ -24,7 +24,7 @@ Organize events, to-dos, and deadlines.
     flo -r id                              Remove item
     flo -c -w what | -f from | -t to       Change item
 
-When changing an item, setting -f or -t to r removes the field.
+When changing an item, setting `-f` or `-t` to `r` removes the field.
 
 ### Date formats
 
