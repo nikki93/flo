@@ -19,7 +19,6 @@
 #define LINE_LENGTH 1024
 
 struct args {
-	char *tag;
 	char *what;
 	char *from;
 	char *to;
@@ -29,7 +28,6 @@ struct args {
 };
 
 struct item {
-	char *tag;
 	char *what;
 	time_t from;
 	time_t to;

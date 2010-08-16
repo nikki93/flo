@@ -20,17 +20,13 @@ Organize events, to-dos, and deadlines.
 
 ### Add item
 
-    flo [.tag] what[,from][-to]
+    flo what[,from][-to]
 
-    flo [-T tag] -w what [-f from | -t to]
+    flo -w what [-f from | -t to]
 
 ### List items
 
     flo
-
-### List items of a tag
-
-    flo .tag
 
 ### Remove item
 
@@ -38,9 +34,9 @@ Organize events, to-dos, and deadlines.
 
 ### Change item
 
-For fields other than `-w what`, `r` as value removes the field.
+For `-f from` and `-t to`, `r` as value removes the field.
 
-    flo -c id -T tag | -w what | -f from | -t to
+    flo -c -w what | -f from | -t to
 
 ### Date formats
 
@@ -63,7 +59,7 @@ The value for hours and minutes is set to `00` if no other value is specified.
 Items are written to `$HOME/.flo`. Each item is stored on a separate line, and
 each field is separated by a tab.
 
-    what\tfrom\tto\ttag
+    what\tfrom\tto\n
 
 ## License
 

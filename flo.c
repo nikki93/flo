@@ -1,18 +1,15 @@
 #include "flo.h"
 
-static int compare_items(const struct item *ia, const struct item *ib);
 static int complete_date(char *s1, const char *s2);
 static int ctoi(const char c);
 static int date_diff(time_t t1, time_t t2);
 static int date_to_time(time_t *t, const char *s);
-static int first_index_of(const char *s, const char c);
 static int last_index_of(const char *s, const char c);
 static int parse_date(time_t *t, const char *s);
 static int sort_items(const void *a, const void *b);
 static int write_item(struct args *a, const time_t from, const time_t to);
 static int write_item_to_stream(
 	FILE *f,
-	const char *tag,
 	const char *what,
 	const time_t from,
 	time_t to);
@@ -23,13 +20,13 @@ static void format_date(char *s, const time_t t1, const time_t t2);
 static void free_items(struct item *items, const size_t n);
 static void line_to_item(struct item *it, char *line);
 static void print_help();
-static void print_items(const struct item *items, const size_t n, const char *tag);
+static void print_items(const struct item *items, const size_t n);
 static void set_year_and_month(char *year, char *month, const struct tm *tm);
 
 int read_args(struct args *a, const int argc, char *argv[]) {
 	int c;
 
-	while ((c = getopt(argc, argv, "c:r:T:w:f:t:h")) != -1) {
+	while ((c = getopt(argc, argv, "c:r:w:f:t:h")) != -1) {
 		switch ((char)c) {
 			case 'c':
 				a->change = 1;
@@ -38,19 +35,6 @@ int read_args(struct args *a, const int argc, char *argv[]) {
 			case 'r':
 				a->remove = 1;
 				a->id = strtol(optarg, NULL, 10);
-				break;
-			case 'T':
-				if (optarg[0] == '.') {
-					a->tag = malloc(strlen(optarg));
-					strncpy(
-						a->tag,
-						optarg + 1,
-						strlen(optarg) - 1);
-				}
-				else {
-					a->tag = malloc(strlen(optarg) + 1);
-					strcpy(a->tag, optarg);
-				}
 				break;
 			case 'w':
 				a->what = malloc(strlen(optarg) + 1);
@@ -91,24 +75,6 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 			strcat(line, " ");
 	}
 
-	if (line[0] == '.') {
-		ind = first_index_of(line, ' ');
-
-		if (ind != -1) {
-			a->tag = calloc(ind, 1);
-			strncpy(a->tag, &line[0] + 1, ind - 1);
-			rest = &line[0] + ind + 1;
-		}
-		else if (strlen(line) > 1) {
-			a->tag = calloc(strlen(line), 1);
-			strncpy(a->tag, &line[1], strlen(line) - 1);
-
-			return 2;
-		}
-		else
-			return 0;
-	}
-
 	ind = last_index_of(rest, '-');
 
 	if (ind != -1) {
@@ -137,7 +103,6 @@ int read_args_short(struct args *a, const int argc, char *argv[]) {
 }
 
 void free_args(struct args *a) {
-	free(a->tag);
 	free(a->what);
 	free(a->from);
 	free(a->to);
@@ -152,12 +117,10 @@ int list_items(struct args *a) {
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
 
-	if (a != NULL) {
-		print_items(items, n, a->tag);
+	print_items(items, n);
+
+	if (a != NULL)
 		free_args(a);
-	}
-	else
-		print_items(items, n, NULL);
 
 	free_items(items, n);
 
@@ -205,18 +168,6 @@ int change_item(struct args *a) {
 
 	qsort(items, n, sizeof(struct item), sort_items);
 	it = &items[a->id];
-
-	if (a->tag != NULL) {
-		if (strcmp(a->tag, "r") == 0) {
-			free(it->tag);
-			it->tag = NULL;
-		}
-		else {
-			free(it->tag);
-			it->tag = malloc(strlen(a->tag) + 1);
-			strcpy(it->tag, a->tag);
-		}
-	}
 
 	if (a->what != NULL) {
 		free(it->what);
@@ -307,7 +258,6 @@ static int write_items(const struct item *items, const size_t n, unsigned int ex
 
 		write_item_to_stream(
 			f,
-			items[i].tag,
 			items[i].what,
 			items[i].from,
 			items[i].to);
@@ -327,7 +277,7 @@ static int write_item(struct args *a, const time_t from, const time_t to) {
 	if ((f = fopen(s, "a")) == NULL)
 		return 0;
 
-	write_item_to_stream(f, a->tag, a->what, from, to);
+	write_item_to_stream(f, a->what, from, to);
 	fclose(f);
 
 	return 1;
@@ -380,7 +330,7 @@ static int date_diff(time_t t1, time_t t2) {
 	return (mktime(&tm1) - mktime(&tm2)) / 60 / 60 / 24;
 }
 
-static void print_items(const struct item *items, const size_t n, const char *tag) {
+static void print_items(const struct item *items, const size_t n) {
 	char s[DATE_FORMAT_LENGTH];
 	unsigned int i;
 	struct item *it;
@@ -389,21 +339,8 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
 
-		if (tag != NULL) {
-			if (it->tag == 0)
-				continue;
-
-			if (strcmp(tag, it->tag) != 0)
-				continue;
-		}
-
 		if (IS_TODO(it)) {
-			printf("t% 3d  ", i);
-
-			if (it->tag != NULL && tag == NULL)
-				printf(".%s ", it->tag);
-
-			printf("%s\n", it->what);
+			printf("t% 3d  %s\n", i, it->what);
 		}
 		else if (IS_DEADLINE(it)) {
 			d = date_diff(it->to, time(NULL));
@@ -413,9 +350,6 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 				printf("d% 3d  %s  d%d  ", i, s, d);
 			else
 				printf("d% 3d  %s      ", i, s);
-
-			if (it->tag != NULL && tag == NULL)
-				printf(".%s ", it->tag);
 
 			printf("%s\n", it->what);
 		}
@@ -427,9 +361,6 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 				printf("% 4d  %s  d%d  ", i, s, d);
 			else
 				printf("% 4d  %s      ", i, s);
-
-			if (it->tag != NULL && tag == NULL)
-				printf(".%s ", it->tag);
 
 			printf("%s\n", it->what);
 
@@ -446,29 +377,13 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 	}
 }
 
-static int compare_items(const struct item *ia, const struct item *ib) {
-	int res;
-
-	if (ia->tag != NULL && ib->tag != NULL) {
-		res = strcmp(ia->tag, ib->tag);
-
-		return res == 0 ? strcmp(ia->what, ib->what) : res;
-	}
-	else if (ia->tag != NULL && ib->tag == NULL)
-		return -1;
-	else if (ia->tag == NULL && ib->tag != NULL)
-		return 1;
-	else
-		return strcmp(ia->what, ib->what);
-}
-
 static int sort_items(const void *a, const void *b) {
 	struct item *ia = (struct item *)a;
 	struct item *ib = (struct item *)b;
 
 	if (IS_TODO(ia)) {
 		if (IS_TODO(ib))
-			return compare_items(ia, ib);
+			return strcmp(ia->what, ib->what);
 		else
 			return 1;
 	}
@@ -518,7 +433,6 @@ static void free_items(struct item *items, const size_t n) {
 	unsigned int i;
 
 	for (i = 0; i < n; i++) {
-		free(items[i].tag);
 		free(items[i].what);
 	}
 
@@ -527,7 +441,6 @@ static void free_items(struct item *items, const size_t n) {
 
 static int write_item_to_stream(
 	FILE *f,
-	const char *tag,
 	const char *what,
 	time_t from,
 	time_t to) {
@@ -544,11 +457,6 @@ static int write_item_to_stream(
 
 	if (to != 0)
 		fprintf(f, "%ld", to);
-
-	fprintf(f, "\t");
-
-	if (tag != NULL)
-		fprintf(f, "%s", tag);
 
 	fprintf(f, "\n");
 
@@ -574,13 +482,6 @@ static void line_to_item(struct item *it, char *line) {
 				break;
 			case 2:
 				it->to = strtol(token, NULL, 10);
-				break;
-			case 3:
-				if (strlen(token) > 0) {
-					it->tag = malloc(strlen(token) + 1);
-					strcpy(it->tag, token);
-				}
-
 				break;
 		}
 	}
@@ -701,16 +602,6 @@ static void set_year_and_month(char *year, char *month, const struct tm *tm) {
 	sprintf(month, "%02d", tm->tm_mon + 1);
 }
 
-static int first_index_of(const char *s, const char c) {
-	unsigned int i;
-
-	for (i = 0; i < strlen(s); i++)
-		if (s[i] == c)
-			return i;
-
-	return -1;
-}
-
 static int last_index_of(const char *s, const char c) {
 	int i;
 
@@ -736,23 +627,20 @@ void fail(struct args *a, const char *e, const int print_help_hint) {
 
 static void print_help() {
 	puts("Add item\n\
-    flo [.tag] what[,from][-to]\n\
+    flo what[,from][-to]\n\
 \n\
-    flo [-T tag] -w what [-f from | -t to]\n\
+    flo -w what [-f from | -t to]\n\
 \n\
 List items\n\
     flo\n\
-\n\
-List items of a tag\n\
-    flo .tag\n\
 \n\
 Remove item\n\
     flo -r id\n\
 \n\
 Change item\n\
-    For fields other than -w what, r as value removes the field.\n\
+    For `-f from` and `-t to`, `r` as value removes the field.\n\
 \n\
-    flo -c id -T tag | -w what | -f from | -t to");
+    flo -c id -w what | -f from | -t to");
 	puts("\n\
 Date formats\n\
     YYYYMMDDhhmm\n\
