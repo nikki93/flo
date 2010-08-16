@@ -224,10 +224,12 @@ static int remove_item(struct args *a) {
 
 	qsort(items, n, sizeof(struct item), sort_items);
 	write_items(items, n, a->id);
+
+	if (a->id != n - 1 && n != 1)
+		puts("Ids are updated.");
+
 	free_args(a);
 	free_items(items, n);
-
-	puts("Ids are updated.");
 
 	return EXIT_SUCCESS;
 }
