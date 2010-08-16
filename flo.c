@@ -3,10 +3,9 @@
 static int compare_items(const struct item *ia, const struct item *ib);
 static int complete_date(char *s1, const char *s2);
 static int ctoi(const char c);
+static int date_diff(time_t t1, time_t t2);
 static int date_to_time(time_t *t, const char *s);
 static int first_index_of(const char *s, const char c);
-static int is_today(const struct tm *tm);
-static int is_tomorrow(const struct tm *tm);
 static int last_index_of(const char *s, const char c);
 static int parse_date(time_t *t, const char *s);
 static int sort_items(const void *a, const void *b);
@@ -334,22 +333,6 @@ static int write_item(struct args *a, const time_t from, const time_t to) {
 	return 1;
 }
 
-static int is_today(const struct tm *tm) {
-	time_t t;
-
-	t = time(NULL);
-
-	return ARE_DATES_EQUAL(localtime(&t), tm);
-}
-
-static int is_tomorrow(const struct tm *tm) {
-	time_t t;
-
-	t = time(NULL) + 86400;
-
-	return ARE_DATES_EQUAL(localtime(&t), tm);
-}
-
 static void format_date(char *s, const time_t t1, const time_t t2) {
 	struct tm *tm, tm1, tm2;
 
@@ -371,18 +354,37 @@ static void format_date(char *s, const time_t t1, const time_t t2) {
 		}
 	}
 
-	if (is_today(&tm1))
-		strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT_TODAY, &tm1);
-	else if (is_tomorrow(&tm1))
-		strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT_TOMORROW, &tm1);
-	else
-		strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT, &tm1);
+	strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT, &tm1);
+}
+
+static int date_diff(time_t t1, time_t t2) {
+	struct tm *tm, tm1, tm2;
+
+	memset(&tm1, 0, sizeof(struct tm));
+	memset(&tm2, 0, sizeof(struct tm));
+
+	tm = localtime(&t1);
+	memcpy(&tm1, tm, sizeof(struct tm));
+
+	tm = localtime(&t2);
+	memcpy(&tm2, tm, sizeof(struct tm));
+
+	tm1.tm_sec = 0;
+	tm1.tm_min = 0;
+	tm1.tm_hour = 0;
+
+	tm2.tm_sec = 0;
+	tm2.tm_min = 0;
+	tm2.tm_hour = 0;
+
+	return (mktime(&tm1) - mktime(&tm2)) / 60 / 60 / 24;
 }
 
 static void print_items(const struct item *items, const size_t n, const char *tag) {
 	char s[DATE_FORMAT_LENGTH];
 	unsigned int i;
 	struct item *it;
+	int d;
 
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
@@ -404,8 +406,13 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 			printf("%s\n", it->what);
 		}
 		else if (IS_DEADLINE(it)) {
+			d = date_diff(it->to, time(NULL));
 			format_date(s, it->to, 0);
-			printf("d% 3d  %s  ", i, s);
+
+			if (d >= 0 && d < 10)
+				printf("d% 3d  d%d  %s  ", i, d, s);
+			else
+				printf("d% 3d      %s   ", i, s);
 
 			if (it->tag != NULL && tag == NULL)
 				printf(".%s ", it->tag);
@@ -413,8 +420,13 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 			printf("%s\n", it->what);
 		}
 		else {
+			d = date_diff(it->from, time(NULL));
 			format_date(s, it->from, 0);
-			printf("% 4d  %s  ", i, s);
+
+			if (d >= 0 && d < 10)
+				printf("% 4d  d%d  %s  ", i, d, s);
+			else
+				printf("% 4d      %s  ", i, s);
 
 			if (it->tag != NULL && tag == NULL)
 				printf(".%s ", it->tag);

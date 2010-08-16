@@ -9,11 +9,9 @@
 
 #define ARE_DATES_EQUAL(tm1, tm2) (((tm1)->tm_year == (tm2)->tm_year && \
 (tm1)->tm_mon == (tm2)->tm_mon) && (tm1)->tm_mday == (tm2)->tm_mday)
-#define DATE_FORMAT "   %m-%d %H:%M"
-#define DATE_FORMAT_DUPLICATE "         %H:%M"
-#define DATE_FORMAT_LENGTH 15
-#define DATE_FORMAT_TODAY "   today %H:%M"
-#define DATE_FORMAT_TOMORROW "tomorrow %H:%M"
+#define DATE_FORMAT "%m-%d %H:%M"
+#define DATE_FORMAT_DUPLICATE "      %H:%M"
+#define DATE_FORMAT_LENGTH 12
 #define GET_FILENAME(s)	sprintf(s, "%s/.flo", getenv("HOME"))
 #define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
 #define IS_TODO(it) (it->from == 0 && it->to == 0)

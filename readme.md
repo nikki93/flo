@@ -7,15 +7,6 @@ Organize events, to-dos, and deadlines.
     make
     cp flo /usr/local/bin/
 
-## Example
-
-    $ flo watch movie,d020
-       0     today 20:00  watch movie
-    $ flo eat lunch,d11100-d11130
-       0     today 20:00  watch movie
-       1  tomorrow 11:00  eat lunch
-                   11:30
-
 ## Usage
 
 ### Add item
