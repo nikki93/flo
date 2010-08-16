@@ -9,8 +9,12 @@ Organize events, to-dos, and deadlines.
 
 ## Example
 
-    $ flo watch a movie,tm20
-       0  tomorrow 20:00  watch a movie
+    $ flo watch movie,t020
+       0     today 20:00  watch movie
+    $ flo eat lunch,t11100-t11130
+       0     today 20:00  watch movie
+       1  tomorrow 11:00  eat lunch
+                   11:30
 
 ## Usage
 
@@ -18,7 +22,7 @@ Organize events, to-dos, and deadlines.
 
     flo [.tag] what[,from][-to]
 
-    flo [-T tag] -w what [-f from | -t to]
+    flo -w what [-f from | -t to] [-T tag]
 
 ### List items
 
@@ -36,7 +40,7 @@ Organize events, to-dos, and deadlines.
 
 For fields other than `-w what`, `r` as value removes the field.
 
-    flo -c id -T tag | -w what | -f from | -t to
+    flo -c id -w what | -f from | -t to | -T tag
 
 ### Date formats
 
@@ -50,8 +54,7 @@ If the year or the month isn’t specified, the current year and month is used.
 For formats without a month, if the date specified is before today’s date, the
 month is set to the next month.
 
-`td`, `tm`, and `+n` can be used in place of `DD`. `td` is today, `tm` is
-tomorrow, and `+n` is `n` days from today.
+Replace `DD` with `tn` to set the date `n` days from today.
 
 The value for hours and minutes is set to `00` if no other value is specified.
 

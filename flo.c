@@ -596,16 +596,7 @@ static int complete_date(char *s1, const char *s2) {
 		case 2:
 		case 4:
 		case 6:
-			if (s2[0] == 't' && s2[1] == 'd') {
-				tm = localtime(&t);
-				sprintf(day, "%02d", (int)tm->tm_mday);
-			}
-			else if (s2[0] == 't' && s2[1] == 'm') {
-				t += 86400;
-				tm = localtime(&t);
-				sprintf(day, "%02d", (int)tm->tm_mday);
-			}
-			else if (s2[0] == '+') {
+			if (s2[0] == 't') {
 				t += ctoi(s2[1]) * 86400;
 				tm = localtime(&t);
 				sprintf(day, "%02d", (int)tm->tm_mday);
@@ -730,7 +721,7 @@ static void print_help() {
 	puts("Add item\n\
     flo [.tag] what[,from][-to]\n\
 \n\
-    flo [-T tag] -w what [-f from | -t to]\n\
+    flo -w what [-f from | -t to] [-T tag]\n\
 \n\
 List items\n\
     flo\n\
@@ -742,9 +733,9 @@ Remove item\n\
     flo -r id\n\
 \n\
 Change item\n\
-    For fields other than “-w what”, ‘r’ as value removes the field.\n\
+    For fields other than -w what, r as value removes the field.\n\
 \n\
-    flo -c id -T tag | -w what | -f from | -t to");
+    flo -c id -w what | -f from | -t to | -T tag");
 	puts("\n\
 Date formats\n\
     YYYYMMDDhhmm\n\
@@ -757,8 +748,7 @@ Date formats\n\
     used. For formats without a month, if the date specified is before today’s\n\
     date, the month is set to the next month.\n\
 \n\
-    td, tm, and +n can be used in place of DD. td is today, tm is tomorrow, and\n\
-    +n is n days from today.\n\
+    Replace DD with tn to set the date n days from today.\n\
 \n\
     The value for hours and minutes is set to 00 if no other value is specified.");
 }
