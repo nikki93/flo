@@ -329,7 +329,7 @@ static int date_diff(time_t t1, time_t t2) {
 	tm2.tm_min = 0;
 	tm2.tm_hour = 0;
 
-	return (mktime(&tm1) - mktime(&tm2)) / 60 / 60 / 24;
+	return (mktime(&tm1) - mktime(&tm2)) / 86400;
 }
 
 static void print_items(const struct item *items, const size_t n) {

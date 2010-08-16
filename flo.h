@@ -10,7 +10,7 @@
 #define DATE_FORMAT "%m-%d %H:%M"
 #define DATE_FORMAT_DUPLICATE "      %H:%M"
 #define DATE_FORMAT_LENGTH 12
-#define GET_FILENAME(s)	sprintf(s, "%s/Dropbox/.flo", getenv("HOME"))
+#define GET_FILENAME(s)	sprintf(s, "%s/.flo", getenv("HOME"))
 #define ITEM_COUNT 1024
 #define LINE_LENGTH 1024
 
