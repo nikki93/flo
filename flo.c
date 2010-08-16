@@ -116,7 +116,6 @@ int list_items(struct args *a) {
 
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
-
 	print_items(items, n);
 
 	if (a != NULL)
@@ -347,22 +346,18 @@ static void print_items(const struct item *items, const size_t n) {
 			format_date(s, it->to, 0);
 
 			if (d >= 0 && d < 10)
-				printf("d% 3d  %s  d%d  ", i, s, d);
+				printf("d% 3d  %s  d%d  %s\n", i, s, d, it->what);
 			else
-				printf("d% 3d  %s      ", i, s);
-
-			printf("%s\n", it->what);
+				printf("d% 3d  %s      %s\n", i, s, it->what);
 		}
 		else {
 			d = date_diff(it->from, time(NULL));
 			format_date(s, it->from, 0);
 
 			if (d >= 0 && d < 10)
-				printf("% 4d  %s  d%d  ", i, s, d);
+				printf("% 4d  %s  d%d  %s\n", i, s, d, it->what);
 			else
-				printf("% 4d  %s      ", i, s);
-
-			printf("%s\n", it->what);
+				printf("% 4d  %s      %s\n", i, s, it->what);
 
 			if (it->to != 0) {
 				d = date_diff(it->to, time(NULL));
