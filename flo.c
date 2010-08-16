@@ -6,7 +6,6 @@ static int complete_date(char *s1, const char *s2);
 static int ctoi(const char c);
 static int date_diff(time_t t1, time_t t2);
 static int date_to_time(time_t *t, const char *s);
-static void fail(struct args *a, const char *e, const int print_help_hint);
 static int last_index_of(const char *s, const char c);
 static int list_items();
 static int parse_date(time_t *t, const char *s);
@@ -618,11 +617,11 @@ static int last_index_of(const char *s, const char c) {
 	return -1;
 }
 
-void fail(struct args *a, const char *e, const int print_help_hint) {
+void fail(struct args *a, const char *e, const int print_usage) {
 	if (e != NULL)
 		puts(e);
 
-	if (print_help_hint)
+	if (print_usage)
 		puts("Try “flo -h” for more information.");
 
 	free_args(a);
