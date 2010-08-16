@@ -412,7 +412,7 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 			if (d >= 0 && d < 10)
 				printf("d% 3d  d%d  %s  ", i, d, s);
 			else
-				printf("d% 3d      %s   ", i, s);
+				printf("d% 3d      %s  ", i, s);
 
 			if (it->tag != NULL && tag == NULL)
 				printf(".%s ", it->tag);
@@ -434,8 +434,13 @@ static void print_items(const struct item *items, const size_t n, const char *ta
 			printf("%s\n", it->what);
 
 			if (it->to != 0) {
+				d = date_diff(it->to, time(NULL));
 				format_date(s, it->to, it->from);
-				printf("      %s\n", s);
+
+				if (d >= 0 && d < 10)
+					printf("      d%d  %s\n", d, s);
+				else
+					printf("          %s\n", s);
 			}
 		}
 	}
