@@ -642,7 +642,7 @@ static void print_help() {
 flo -w what [-f from | -t to]          Add item\n\
 flo                                    List items\n\
 flo -r id                              Remove item\n\
-flo -c -w what | -f from | -t to       Change item\n\
+flo -c id -w what | -f from | -t to    Change item\n\
 \n\
 When changing an item, setting -f or -t to r removes the field.\n");
 	puts("YYYYMMDDhhmm, MMDDhhmm, DDhhmm, DDhh, and DD are the valid date formats.\n\

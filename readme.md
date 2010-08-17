@@ -24,7 +24,7 @@ Organize events, to-dos, and deadlines.
     flo -w what [-f from | -t to]          Add item
     flo                                    List items
     flo -r id                              Remove item
-    flo -c -w what | -f from | -t to       Change item
+    flo -c -id w what | -f from | -t to    Change item
 
 When changing an item, setting `-f` or `-t` to `r` removes the field.
 
