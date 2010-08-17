@@ -309,15 +309,15 @@ static void format_date(char *s, const time_t t1, const time_t t2) {
 		if (ARE_DATES_EQUAL(&tm2, &tm1)) {
 			strftime(
 				s,
-				DATE_FORMAT_LENGTH,
-				DATE_FORMAT_DUPLICATE,
+				FORMAT_DATE_LENGTH,
+				FORMAT_DATE_DUPLICATE,
 				&tm1);
 
 			return;
 		}
 	}
 
-	strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT, &tm1);
+	strftime(s, FORMAT_DATE_LENGTH, FORMAT_DATE, &tm1);
 }
 
 static int date_diff(time_t t1, time_t t2) {
@@ -341,7 +341,7 @@ static int date_diff(time_t t1, time_t t2) {
 }
 
 static void print_items(const struct item *items, const size_t n) {
-	char s[DATE_FORMAT_LENGTH];
+	char s[FORMAT_DATE_LENGTH];
 	unsigned int i;
 	struct item *it;
 	int d;
@@ -350,43 +350,33 @@ static void print_items(const struct item *items, const size_t n) {
 		it = (struct item *)&items[i];
 
 		if (IS_TODO(it))
-			printf("t% 3d  %s\n", i, it->what);
+			printf(FORMAT_TODO, 3, i, it->what);
 		else if (IS_DEADLINE(it)) {
 			d = date_diff(it->to, time(NULL));
 			format_date(s, it->to, 0);
 
 			if (d >= 0 && d < 10)
-				printf(
-					"d% 3d  %s  d%d  %s\n",
-					i,
-					s,
-					d,
-					it->what);
+				printf(FORMAT_DEADLINE_D, 3, i, s, d, it->what);
 			else
-				printf("d% 3d  %s      %s\n", i, s, it->what);
+				printf(FORMAT_DEADLINE, 3, i, s, it->what);
 		}
 		else {
 			d = date_diff(it->from, time(NULL));
 			format_date(s, it->from, 0);
 
 			if (d >= 0 && d < 10)
-				printf(
-					"% 4d  %s  d%d  %s\n",
-					i,
-					s,
-					d,
-					it->what);
+				printf(FORMAT_EVENT_D, 4, i, s, d, it->what);
 			else
-				printf("% 4d  %s      %s\n", i, s, it->what);
+				printf(FORMAT_EVENT, 4, i, s, it->what);
 
 			if (it->to != 0) {
 				d = date_diff(it->to, time(NULL));
 				format_date(s, it->to, it->from);
 
 				if (d >= 0 && d < 10)
-					printf("      %s  d%d\n", s, d);
+					printf(FORMAT_EVENT_TO_D, s, d);
 				else
-					printf("      %s    \n", s);
+					printf(FORMAT_EVENT_TO, s);
 			}
 		}
 	}
