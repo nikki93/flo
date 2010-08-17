@@ -5,7 +5,7 @@ Organize events, to-dos, and deadlines.
 ## Installation
 
     make
-    cp flo /usr/local/bin/
+    make install
 
 ## Example
 
