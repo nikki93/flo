@@ -138,14 +138,14 @@ static int add_item(struct args *a) {
 
 	if (a->from != NULL)
 		if (parse_date(&from, a->from) == 0)
-			fail(a, "Could not parse from-date.", 0);
+			fail(a, "From-date is not valid.", 0);
 
 	if (a->to != NULL)
 		if (parse_date(&to, a->to) == 0)
-			fail(a, "Could not parse to-date.", 0);
+			fail(a, "To-date is not valid.", 0);
 
 	if (write_item(a, from, to) == 0)
-		fail(a, "Could not write to ~/.flo.", 0);
+		fail(a, "File can not be written to.", 0);
 
 	free_args(a);
 
@@ -165,7 +165,7 @@ static int change_item(struct args *a) {
 
 	if (n == 0 || a->id >= n) {
 		free_items(items, n);
-		fail(a, "Could not find item.", 0);
+		fail(a, "Item does not exist.", 0);
 
 		return EXIT_FAILURE;
 	}
@@ -183,7 +183,7 @@ static int change_item(struct args *a) {
 			it->from = 0;
 		else
 			if (parse_date(&it->from, a->from) == 0)
-				fail(a, "Could not parse from-date.", 0);
+				fail(a, "From-date is not valid.", 0);
 	}
 
 	if (a->to != NULL) {
@@ -191,14 +191,14 @@ static int change_item(struct args *a) {
 			it->to = 0;
 		else
 			if (parse_date(&it->to, a->to) == 0)
-				fail(a, "Could not parse to-date.", 0);
+				fail(a, "To-date is not valid.", 0);
 	}
 
 	write_items(items, n, -1);
 	free_args(a);
 	free_items(items, n);
 
-	puts("Ids might have been updated.");
+	puts("Ids might be updated.");
 
 	return EXIT_SUCCESS;
 }
@@ -213,7 +213,7 @@ static int remove_item(struct args *a) {
 
 	if (n == 0 || a->id >= n) {
 		free_items(items, n);
-		fail(a, "Could not find item.", 0);
+		fail(a, "Item does not exist.", 0);
 
 		return EXIT_FAILURE;
 	}
