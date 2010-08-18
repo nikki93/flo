@@ -7,7 +7,7 @@ static int ctoi(const char c);
 static int date_diff(time_t t1, time_t t2);
 static int date_to_time(time_t *t, const char *s);
 static int last_index_of(const char *s, const char c);
-static int list_items();
+static int list_items(const int list_all);
 static int parse_date(time_t *t, const char *s);
 static int read_args(struct args *a, const int argc, char *argv[]);
 static int read_args_short(struct args *a, const int argc, char *argv[]);
@@ -28,8 +28,8 @@ static void free_args(struct args *a);
 static void free_items(struct item *items, const size_t n);
 static void get_year_and_month(char *year, char *month, const struct tm *tm);
 static void line_to_item(struct item *it, char *line);
-static void print_help();
-static void print_items(const struct item *items, const size_t n);
+static void print_usage();
+static void print_items(const struct item *items, const size_t n, const int list_all);
 
 static int read_args(struct args *a, const int argc, char *argv[]) {
 	char c;
@@ -60,7 +60,7 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 
 				break;
 			case 'h':
-				print_help();
+				print_usage();
 				exit(EXIT_SUCCESS);
 			case '?':
 				return 0;
@@ -71,7 +71,7 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 }
 
 static int read_args_short(struct args *a, const int argc, char *argv[]) {
-	char line[LINE_LENGTH];
+	char line[LINE_BUFFER_SIZE];
 	char *rest = &line[0];
 	int i;
 	int ind;
@@ -119,15 +119,15 @@ void free_args(struct args *a) {
 	free(a->to);
 }
 
-static int list_items() {
+static int list_items(const int list_all) {
 	size_t n;
 	struct item *items;
 
-	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_BUFFER_SIZE);
 
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
-	print_items(items, n);
+	print_items(items, n, list_all);
 	free_items(items, n);
 
 	return EXIT_SUCCESS;
@@ -163,7 +163,7 @@ static int change_item(struct args *a) {
 	struct item *it;
 	struct item *items;
 
-	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_BUFFER_SIZE);
 
 	n = read_items(items);
 
@@ -211,7 +211,7 @@ static int remove_item(struct args *a) {
 	size_t n;
 	struct item *items;
 
-	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_BUFFER_SIZE);
 
 	n = read_items(items);
 
@@ -236,7 +236,7 @@ static int remove_item(struct args *a) {
 
 static size_t read_items(struct item *items) {
 	FILE *f;
-	char line[LINE_LENGTH];
+	char line[LINE_BUFFER_SIZE];
 	char s[256];
 	int n;
 
@@ -245,7 +245,7 @@ static size_t read_items(struct item *items) {
 	if ((f = fopen(s, "r")) == NULL)
 		return 0;
 
-	for (n = 0; (fgets(line, LINE_LENGTH, f)) != NULL; n++) {
+	for (n = 0; (fgets(line, LINE_BUFFER_SIZE, f)) != NULL; n++) {
 		line[strlen(line) - 1] = '\0';
 		line_to_item(&items[n], line);
 	}
@@ -309,15 +309,15 @@ static void format_date(char *s, const time_t t1, const time_t t2) {
 		if (ARE_DATES_EQUAL(&tm2, &tm1)) {
 			strftime(
 				s,
-				DATE_FORMAT_LENGTH,
-				DATE_FORMAT_DUPLICATE,
+				FORMAT_DATE_LENGTH,
+				FORMAT_DATE_DUPLICATE,
 				&tm1);
 
 			return;
 		}
 	}
 
-	strftime(s, DATE_FORMAT_LENGTH, DATE_FORMAT, &tm1);
+	strftime(s, FORMAT_DATE_LENGTH, FORMAT_DATE, &tm1);
 }
 
 static int date_diff(time_t t1, time_t t2) {
@@ -340,53 +340,58 @@ static int date_diff(time_t t1, time_t t2) {
 	return (mktime(&tm1) - mktime(&tm2)) / 86400;
 }
 
-static void print_items(const struct item *items, const size_t n) {
-	char s[DATE_FORMAT_LENGTH];
+static void print_items(const struct item *items, const size_t n, const int list_all) {
+	char s[FORMAT_DATE_LENGTH];
 	unsigned int i;
 	struct item *it;
 	int d;
+        int j = 0;
 
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
 
 		if (IS_TODO(it))
-			printf("t% 3d  %s\n", i, it->what);
+			printf(FORMAT_TODO, 3, i, it->what);
 		else if (IS_DEADLINE(it)) {
+			if (!list_all) {
+				if (j == ITEM_COUNT)
+					continue;
+
+				j++;
+			}
+
 			d = date_diff(it->to, time(NULL));
 			format_date(s, it->to, 0);
 
 			if (d >= 0 && d < 10)
-				printf(
-					"d% 3d  %s  d%d  %s\n",
-					i,
-					s,
-					d,
-					it->what);
+				printf(FORMAT_DEADLINE_D, 3, i, s, d, it->what);
 			else
-				printf("d% 3d  %s      %s\n", i, s, it->what);
+				printf(FORMAT_DEADLINE, 3, i, s, it->what);
 		}
 		else {
+			if (!list_all) {
+				if (j == ITEM_COUNT)
+					continue;
+
+				j++;
+			}
+
 			d = date_diff(it->from, time(NULL));
 			format_date(s, it->from, 0);
 
 			if (d >= 0 && d < 10)
-				printf(
-					"% 4d  %s  d%d  %s\n",
-					i,
-					s,
-					d,
-					it->what);
+				printf(FORMAT_EVENT_D, 4, i, s, d, it->what);
 			else
-				printf("% 4d  %s      %s\n", i, s, it->what);
+				printf(FORMAT_EVENT, 4, i, s, it->what);
 
 			if (it->to != 0) {
 				d = date_diff(it->to, time(NULL));
 				format_date(s, it->to, it->from);
 
 				if (d >= 0 && d < 10)
-					printf("      %s  d%d\n", s, d);
+					printf(FORMAT_EVENT_TO_D, s, d);
 				else
-					printf("      %s    \n", s);
+					printf(FORMAT_EVENT_TO, s);
 			}
 		}
 	}
@@ -637,22 +642,8 @@ void fail(struct args *a, const char *e, const int print_usage) {
 	exit(EXIT_FAILURE);
 }
 
-static void print_help() {
-	puts("flo what[,from][-to]                   Add item\n\
-flo -w what [-f from | -t to]          Add item\n\
-flo                                    List items\n\
-flo -r id                              Remove item\n\
-flo -c id -w what | -f from | -t to    Change item\n\
-\n\
-When changing an item, setting -f or -t to r removes the field.\n");
-	puts("YYYYMMDDhhmm, MMDDhhmm, DDhhmm, DDhh, and DD are the valid date formats.\n\
-Replace DD with dn to set the date n days from today’s date.\n\
-\n\
-If the year or the month isn’t specified, the current year and month is used.\n\
-For formats without a month, if the date specified is before today’s date, the\n\
-month is set to the next month.\n\
-\n\
-The value for hours and minutes is set to 00 if no other value is specified.");
+static void print_usage() {
+	puts("usage: flo [-a] [-c id] [-f from] [-r id] [-t to] [-w what] [what[,from][-to]]");
 }
 
 int main(int argc, char *argv[]) {
@@ -660,7 +651,9 @@ int main(int argc, char *argv[]) {
 	int res;
 
 	if (argc < 2)
-		return list_items();
+		return list_items(0);
+	else if (strcmp(argv[1], "-a") == 0)
+		return list_items(1);
 	else {
 		memset(&a, 0, sizeof(struct args));
 
