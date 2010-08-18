@@ -20,11 +20,16 @@ Organize events, to-dos, and deadlines.
 
 ## Usage
 
-    flo what[,from][-to]                   Add item
-    flo -w what [-f from | -t to]          Add item
-    flo                                    List items
-    flo -r id                              Remove item
-    flo -c -id w what | -f from | -t to    Change item
+    flo [-a] [-c id] [-f from] [-r id] [-t to] [-w what] [what[,from][-to]]
+
+## Options
+
+    -a         all items
+    -c id      change item
+    -f from    from date
+    -r id      remove item
+    -t to      to date
+    -w what
 
 When changing an item, setting `-f` or `-t` to `r` removes the field.
 

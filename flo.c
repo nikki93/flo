@@ -28,7 +28,7 @@ static void free_args(struct args *a);
 static void free_items(struct item *items, const size_t n);
 static void get_year_and_month(char *year, char *month, const struct tm *tm);
 static void line_to_item(struct item *it, char *line);
-static void print_help();
+static void print_usage();
 static void print_items(const struct item *items, const size_t n, const int list_all);
 
 static int read_args(struct args *a, const int argc, char *argv[]) {
@@ -60,7 +60,7 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 
 				break;
 			case 'h':
-				print_help();
+				print_usage();
 				exit(EXIT_SUCCESS);
 			case '?':
 				return 0;
@@ -642,22 +642,8 @@ void fail(struct args *a, const char *e, const int print_usage) {
 	exit(EXIT_FAILURE);
 }
 
-static void print_help() {
-	puts("flo what[,from][-to]                   Add item\n\
-flo -w what [-f from | -t to]          Add item\n\
-flo                                    List items\n\
-flo -r id                              Remove item\n\
-flo -c id -w what | -f from | -t to    Change item\n\
-\n\
-When changing an item, setting -f or -t to r removes the field.\n");
-	puts("YYYYMMDDhhmm, MMDDhhmm, DDhhmm, DDhh, and DD are the valid date formats.\n\
-Replace DD with dn to set the date n days from today’s date.\n\
-\n\
-If the year or the month isn’t specified, the current year and month is used.\n\
-For formats without a month, if the date specified is before today’s date, the\n\
-month is set to the next month.\n\
-\n\
-The value for hours and minutes is set to 00 if no other value is specified.");
+static void print_usage() {
+	puts("usage: flo [-a] [-c id] [-f from] [-r id] [-t to] [-w what] [what[,from][-to]]");
 }
 
 int main(int argc, char *argv[]) {
