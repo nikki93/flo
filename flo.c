@@ -1,37 +1,33 @@
 #include "flo.h"
 
-static int add_item(struct args *a);
-static int change_item(struct args *a);
-static int complete_date(char *s1, const char *s2);
-static int ctoi(const char c);
-static int date_diff(time_t t1, time_t t2);
-static int date_to_time(time_t *t, const char *s);
-static int last_index_of(const char *s, const char c);
-static int list_items(const int list_all);
-static int parse_date(time_t *t, const char *s);
-static int read_args(struct args *a, const int argc, char *argv[]);
-static int read_args_short(struct args *a, const int argc, char *argv[]);
-static int remove_item(struct args *a);
-static int sort_items(const void *a, const void *b);
-static int write_item(struct args *a, const time_t from, const time_t to);
-static int write_item_to_stream(
-	FILE *f,
-	const char *what,
-	const time_t from,
-	time_t to);
-static int write_items(const struct item *items, const size_t n, unsigned int except);
-static size_t read_items(struct item *items);
-static void adjust_month(struct tm *tm, const char *s);
-static void fail(struct args *a, const char *e, const int print_usage);
-static void format_date(char *s, const time_t t1, const time_t t2);
-static void free_args(struct args *a);
-static void free_items(struct item *items, const size_t n);
-static void get_year_and_month(char *year, char *month, const struct tm *tm);
-static void line_to_item(struct item *it, char *line);
-static void print_usage();
-static void print_items(const struct item *items, const size_t n, const int list_all);
+static int add_item(struct args *);
+static int change_item(struct args *);
+static int complete_date(char *, const char *);
+static int ctoi(const char);
+static int date_diff(time_t, time_t);
+static int date_to_time(time_t *, const char *);
+static int last_index_of(const char *, const char);
+static int list_items(const int);
+static int parse_date(time_t *, const char *);
+static int read_args(struct args *, const int, char **);
+static int read_args_short(struct args *, const int, char **);
+static int remove_item(struct args *);
+static int sort_items(const void *, const void *);
+static int write_item(struct args *, const time_t, const time_t);
+static int write_item_to_stream(FILE *, const char *, const time_t, time_t);
+static int write_items(const struct item *, const size_t, unsigned int);
+static size_t read_items(struct item *);
+static void adjust_month(struct tm *, const char *);
+static void fail(struct args *, const char *, const int);
+static void format_date(char *, const time_t, const time_t);
+static void free_args(struct args *);
+static void free_items(struct item *, const size_t);
+static void get_year_and_month(char *, char *, const struct tm *);
+static void line_to_item(struct item *, char *);
+static void print_items(const struct item *, const size_t, const int);
+static void usage();
 
-static int read_args(struct args *a, const int argc, char *argv[]) {
+static int read_args(struct args *a, const int argc, char **argv) {
 	char c;
 
 	while ((c = getopt(argc, argv, "w:f:t:r:c:h")) != -1) {
@@ -60,7 +56,7 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 
 				break;
 			case 'h':
-				print_usage();
+				usage();
 				exit(EXIT_SUCCESS);
 			case '?':
 				return 0;
@@ -70,7 +66,7 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 	return 1;
 }
 
-static int read_args_short(struct args *a, const int argc, char *argv[]) {
+static int read_args_short(struct args *a, const int argc, char **argv) {
 	char line[LINE_BUFFER_SIZE];
 	char *rest = &line[0];
 	int i;
@@ -142,11 +138,11 @@ static int add_item(struct args *a) {
 
 	if (a->from != NULL)
 		if (parse_date(&from, a->from) == 0)
-			fail(a, "Could not parse from-date.", 1);
+			fail(a, "Could not parse from-date.", 0);
 
 	if (a->to != NULL)
 		if (parse_date(&to, a->to) == 0)
-			fail(a, "Could not parse to-date.", 1);
+			fail(a, "Could not parse to-date.", 0);
 
 	if (write_item(a, from, to) == 0)
 		fail(a, "Could not write to ~/.flo.", 0);
@@ -187,7 +183,7 @@ static int change_item(struct args *a) {
 			it->from = 0;
 		else
 			if (parse_date(&it->from, a->from) == 0)
-				fail(a, "Could not parse from-date.", 1);
+				fail(a, "Could not parse from-date.", 0);
 	}
 
 	if (a->to != NULL) {
@@ -195,7 +191,7 @@ static int change_item(struct args *a) {
 			it->to = 0;
 		else
 			if (parse_date(&it->to, a->to) == 0)
-				fail(a, "Could not parse to-date.", 1);
+				fail(a, "Could not parse to-date.", 0);
 	}
 
 	write_items(items, n, -1);
@@ -635,18 +631,18 @@ void fail(struct args *a, const char *e, const int print_usage) {
 		puts(e);
 
 	if (print_usage)
-		puts("Try “flo -h” for more information.");
+		usage();
 
 	free_args(a);
 
 	exit(EXIT_FAILURE);
 }
 
-static void print_usage() {
+static void usage() {
 	puts("usage: flo [-a] [-c id] [-f from] [-r id] [-t to] [-w what] [what[,from][-to]]");
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char **argv) {
 	struct args a;
 	int res;
 
