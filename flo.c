@@ -7,7 +7,7 @@ static int ctoi(const char c);
 static int date_diff(time_t t1, time_t t2);
 static int date_to_time(time_t *t, const char *s);
 static int last_index_of(const char *s, const char c);
-static int list_items();
+static int list_items(const int list_all);
 static int parse_date(time_t *t, const char *s);
 static int read_args(struct args *a, const int argc, char *argv[]);
 static int read_args_short(struct args *a, const int argc, char *argv[]);
@@ -29,7 +29,7 @@ static void free_items(struct item *items, const size_t n);
 static void get_year_and_month(char *year, char *month, const struct tm *tm);
 static void line_to_item(struct item *it, char *line);
 static void print_help();
-static void print_items(const struct item *items, const size_t n);
+static void print_items(const struct item *items, const size_t n, const int list_all);
 
 static int read_args(struct args *a, const int argc, char *argv[]) {
 	char c;
@@ -71,7 +71,7 @@ static int read_args(struct args *a, const int argc, char *argv[]) {
 }
 
 static int read_args_short(struct args *a, const int argc, char *argv[]) {
-	char line[LINE_LENGTH];
+	char line[LINE_BUFFER_SIZE];
 	char *rest = &line[0];
 	int i;
 	int ind;
@@ -119,15 +119,15 @@ void free_args(struct args *a) {
 	free(a->to);
 }
 
-static int list_items() {
+static int list_items(const int list_all) {
 	size_t n;
 	struct item *items;
 
-	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_BUFFER_SIZE);
 
 	n = read_items(items);
 	qsort(items, n, sizeof(struct item), sort_items);
-	print_items(items, n);
+	print_items(items, n, list_all);
 	free_items(items, n);
 
 	return EXIT_SUCCESS;
@@ -163,7 +163,7 @@ static int change_item(struct args *a) {
 	struct item *it;
 	struct item *items;
 
-	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_BUFFER_SIZE);
 
 	n = read_items(items);
 
@@ -211,7 +211,7 @@ static int remove_item(struct args *a) {
 	size_t n;
 	struct item *items;
 
-	items = (struct item *)malloc(sizeof(struct item) * ITEM_COUNT);
+	items = (struct item *)malloc(sizeof(struct item) * ITEM_BUFFER_SIZE);
 
 	n = read_items(items);
 
@@ -236,7 +236,7 @@ static int remove_item(struct args *a) {
 
 static size_t read_items(struct item *items) {
 	FILE *f;
-	char line[LINE_LENGTH];
+	char line[LINE_BUFFER_SIZE];
 	char s[256];
 	int n;
 
@@ -245,7 +245,7 @@ static size_t read_items(struct item *items) {
 	if ((f = fopen(s, "r")) == NULL)
 		return 0;
 
-	for (n = 0; (fgets(line, LINE_LENGTH, f)) != NULL; n++) {
+	for (n = 0; (fgets(line, LINE_BUFFER_SIZE, f)) != NULL; n++) {
 		line[strlen(line) - 1] = '\0';
 		line_to_item(&items[n], line);
 	}
@@ -340,11 +340,12 @@ static int date_diff(time_t t1, time_t t2) {
 	return (mktime(&tm1) - mktime(&tm2)) / 86400;
 }
 
-static void print_items(const struct item *items, const size_t n) {
+static void print_items(const struct item *items, const size_t n, const int list_all) {
 	char s[FORMAT_DATE_LENGTH];
 	unsigned int i;
 	struct item *it;
 	int d;
+        int j = 0;
 
 	for (i = 0; i < n; i++) {
 		it = (struct item *)&items[i];
@@ -352,6 +353,13 @@ static void print_items(const struct item *items, const size_t n) {
 		if (IS_TODO(it))
 			printf(FORMAT_TODO, 3, i, it->what);
 		else if (IS_DEADLINE(it)) {
+			if (!list_all) {
+				if (j == ITEM_COUNT)
+					continue;
+
+				j++;
+			}
+
 			d = date_diff(it->to, time(NULL));
 			format_date(s, it->to, 0);
 
@@ -361,6 +369,13 @@ static void print_items(const struct item *items, const size_t n) {
 				printf(FORMAT_DEADLINE, 3, i, s, it->what);
 		}
 		else {
+			if (!list_all) {
+				if (j == ITEM_COUNT)
+					continue;
+
+				j++;
+			}
+
 			d = date_diff(it->from, time(NULL));
 			format_date(s, it->from, 0);
 
@@ -650,7 +665,9 @@ int main(int argc, char *argv[]) {
 	int res;
 
 	if (argc < 2)
-		return list_items();
+		return list_items(0);
+	else if (strcmp(argv[1], "-a") == 0)
+		return list_items(1);
 	else {
 		memset(&a, 0, sizeof(struct args));
 

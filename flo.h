@@ -8,12 +8,13 @@
 #include <unistd.h>
 
 #define GET_FILENAME(s)	sprintf(s, "%s/.flo", getenv("HOME"))
-#define ITEM_COUNT 1024
-#define LINE_LENGTH 1024
+#define ITEM_BUFFER_SIZE 1024
+#define ITEM_COUNT 16
+#define LINE_BUFFER_SIZE 1024
 
-#define ARGS_ADD 0
-#define ARGS_REMOVE 1
-#define ARGS_CHANGE 2
+#define ARGS_ADD		0x00
+#define ARGS_REMOVE		0x01
+#define ARGS_CHANGE		0x02
 
 #define FORMAT_DATE		"%m-%d %H:%M"
 #define FORMAT_DATE_DUPLICATE	"      %H:%M"
