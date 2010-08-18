@@ -7,10 +7,10 @@
 #include <time.h>
 #include <unistd.h>
 
-#define GET_FILENAME(s)	sprintf(s, "%s/.flo", getenv("HOME"))
-#define ITEM_BUFFER_SIZE 1024
-#define ITEM_COUNT 8
-#define LINE_BUFFER_SIZE 1024
+#define GET_FILENAME(s)		sprintf(s, "%s/.flo", getenv("HOME"))
+#define ITEM_BUFFER_SIZE	1024
+#define ITEM_COUNT		8
+#define LINE_BUFFER_SIZE	1024
 
 #define ARGS_ADD		0x00
 #define ARGS_REMOVE		0x01
@@ -31,8 +31,8 @@
 	(((tm1)->tm_year == (tm2)->tm_year && \
 	(tm1)->tm_mon == (tm2)->tm_mon) && \
 	(tm1)->tm_mday == (tm2)->tm_mday)
-#define IS_DEADLINE(it) (it->from == 0 && it->to != 0)
-#define IS_TODO(it) (it->from == 0 && it->to == 0)
+#define IS_DEADLINE(it)		(it->from == 0 && it->to != 0)
+#define IS_TODO(it)		(it->from == 0 && it->to == 0)
 
 struct args {
 	char *what;
