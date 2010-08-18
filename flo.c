@@ -198,7 +198,7 @@ static int change_item(struct args *a) {
 	free_args(a);
 	free_items(items, n);
 
-	puts("Ids might be updated.");
+	puts("Ids might have been updated.");
 
 	return EXIT_SUCCESS;
 }
