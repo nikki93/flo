@@ -26,7 +26,6 @@
 #define FORMAT_EVENT_TO		"      %s    \n"
 #define FORMAT_EVENT_TO_D	"      %s  d%d\n"
 #define FORMAT_TODO		"t%*d  %s\n"
->>>>>>> upstream/master
 
 #define ARE_DATES_EQUAL(tm1, tm2) \
 	(((tm1)->tm_year == (tm2)->tm_year && \
