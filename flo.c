@@ -3,7 +3,6 @@
 static int add_item(struct args *);
 static int change_item(struct args *);
 static int complete_date(char *, const char *);
-static int ctoi(const char);
 static int date_diff(time_t, time_t);
 static int date_to_time(time_t *, const char *);
 static int last_index_of(const char *, const char);
@@ -526,7 +525,7 @@ static int complete_date(char *s1, const char *s2) {
 		case 4:
 		case 6:
 			if (s2[0] == 'd') {
-				t += ctoi(s2[1]) * 86400;
+				t += (s2[1] - '0') * 86400;
 				tm = localtime(&t);
 				sprintf(day, "%02d", (int)tm->tm_mday);
 			}
@@ -596,15 +595,6 @@ void adjust_month(struct tm *tm, const char *s) {
 			tm->tm_year++;
 		}
 	}
-}
-
-static int ctoi(const char c) {
-	char s[2];
-
-	s[0] = c;
-	s[1] = '\0';
-
-	return strtol(s, NULL, 10);
 }
 
 static void get_year_and_month(char *year, char *month, const struct tm *tm) {
