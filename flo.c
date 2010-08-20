@@ -30,7 +30,7 @@ static void usage();
 static int read_args(struct args *a, const int argc, char **argv) {
 	char c;
 
-	while ((c = getopt(argc, argv, "w:f:t:r:c:h")) != -1) {
+	while ((c = getopt(argc, argv, "w:f:t:r:c:")) != -1) {
 		switch (c) {
 			case 'w':
 				a->what = strdup(optarg);
@@ -55,9 +55,6 @@ static int read_args(struct args *a, const int argc, char **argv) {
 					fail(a, "Id is not valid.", 0);
 
 				break;
-			case 'h':
-				usage();
-				exit(EXIT_SUCCESS);
 			case '?':
 				return 0;
 		}
@@ -147,9 +144,9 @@ static int add_item(struct args *a) {
 	if (write_item(a, from, to) == 0)
 		fail(a, "File can not be written to.", 0);
 
-	free_args(a);
-
 	puts("Ids are updated.");
+
+	free_args(a);
 
 	return EXIT_SUCCESS;
 }
@@ -195,10 +192,11 @@ static int change_item(struct args *a) {
 	}
 
 	write_items(items, n, -1);
-	free_args(a);
-	free_items(items, n);
 
 	puts("Ids might be updated.");
+
+	free_args(a);
+	free_items(items, n);
 
 	return EXIT_SUCCESS;
 }
@@ -644,19 +642,20 @@ static void usage() {
 
 int main(int argc, char **argv) {
 	struct args a;
-	int res;
 
 	if (argc < 2)
 		return list_items(0);
 	else if (strcmp(argv[1], "-a") == 0)
 		return list_items(1);
+	else if (strcmp(argv[1], "-h") == 0) {
+		usage();
+		return EXIT_SUCCESS;
+	}
 	else {
 		memset(&a, 0, sizeof(struct args));
 
 		if (argv[1][0] != '-') {
-			res = read_args_short(&a, argc, argv);
-
-			if (res == 0)
+			if (!read_args_short(&a, argc, argv))
 				fail(&a, NULL, 1);
 
 			return add_item(&a);
