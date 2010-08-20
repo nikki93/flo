@@ -64,18 +64,16 @@ static int read_args(struct args *a, const int argc, char **argv) {
 }
 
 static int read_args_short(struct args *a, const int argc, char **argv) {
-	char line[LINE_BUFFER_SIZE];
+	char line[LINE_BUFFER_SIZE] = "";
 	char *rest = &line[0];
 	int i;
 	int ind;
 	size_t n;
 
-	memset(line, 0, sizeof(line));
-
 	for (i = 1; i < argc; i++) {
 		strcat(line, argv[i]);
 
-		if (i != (argc - 1))
+		if (i != argc - 1)
 			strcat(line, " ");
 	}
 
