@@ -9,7 +9,7 @@
 
 #define GET_FILENAME(s)		sprintf(s, "%s/Dropbox/todo", getenv("HOME"))
 #define ITEM_BUFFER_SIZE	1024
-#define ITEM_COUNT		8
+#define ITEM_COUNT		16
 #define LINE_BUFFER_SIZE	1024
 
 #define ARGS_ADD		0x00
